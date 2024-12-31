@@ -25,7 +25,7 @@ export function Navbar({ user, username }: { user: User; username?: string }) {
 
     return (
         <nav className="border-b">
-            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div className="container mx-auto px-4 h-16 flex items-center justify-between w-[800px]">
                 <Link href="/recipes" className="text-xl font-bold">
                     tastebud
                 </Link>

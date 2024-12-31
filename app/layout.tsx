@@ -41,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </head>
             <body className="min-h-screen bg-background font-ibm-plex-mono antialiased">
                 {session && <Navbar user={session.user} username={userProfile?.username} />}
-                <main className="container mx-auto px-4 py-8">{children}</main>
+                <main className="container mx-auto px-4 py-8 w-[800px]">{children}</main>
             </body>
         </html>
     );

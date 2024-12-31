@@ -17,7 +17,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
     return (
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow w-full">
             <CardHeader>
                 <CardTitle className="line-clamp-2">{recipe.title}</CardTitle>
             </CardHeader>

@@ -47,13 +47,13 @@ export default async function RecipesPage() {
                         <Button asChild variant="outline">
                             <Link href="/recipes/import">Import a Recipe</Link>
                         </Button>
-                        <Button asChild>
+                        <Button asChild variant="outline">
                             <Link href="/recipes/new">Create a Recipe</Link>
                         </Button>
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex flex-col space-y-4">
                     {recipes?.map((recipe) => (
                         <RecipeCard key={recipe.id} recipe={recipe} />
                     ))}
