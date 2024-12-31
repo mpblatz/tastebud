@@ -37,7 +37,7 @@ export default function UsernameForm({ userId }: { userId: string }) {
             }
 
             // Update profile with new username
-            const { error: updateError } = await supabase.from("profiles").upsert(
+            const { data: updateData, error: updateError } = await supabase.from("profiles").upsert(
                 {
                     id: userId, // Use passed userId instead of fetching user again
                     username: username.toLowerCase(),
@@ -55,7 +55,11 @@ export default function UsernameForm({ userId }: { userId: string }) {
             router.push("/recipes");
             router.refresh();
         } catch (err) {
-            console.error("Error setting username:", err);
+            console.error("Error details:", {
+                error: err,
+                userId: userId,
+                username: username,
+            });
             setError(err instanceof Error ? err.message : "Failed to set username");
         } finally {
             setLoading(false);
@@ -87,8 +91,8 @@ export default function UsernameForm({ userId }: { userId: string }) {
                                 required
                                 className="relative pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 placeholder="Username"
-                                pattern="^[a-zA-Z0-9_-]{3,15}$"
-                                title="Username must be 3-15 characters long and can only contain letters, numbers, underscores, and hyphens"
+                                pattern="[a-zA-Z0-9_\-]{2,15}"
+                                title="Username must be 2-15 characters long and can only contain letters, numbers, underscores, and hyphens"
                                 value={username}
                                 onChange={(e) => {
                                     setUsername(e.target.value);

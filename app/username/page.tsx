@@ -6,10 +6,8 @@ import { cookies } from "next/headers";
 
 export default async function UsernamePage() {
     try {
-        const cookieStore = cookies();
-        const supabase = createServerComponentClient<Database>({
-            cookies: () => cookieStore,
-        });
+        // Create server component client
+        const supabase = createServerComponentClient<Database>({ cookies });
 
         const {
             data: { user },
@@ -20,7 +18,23 @@ export default async function UsernamePage() {
             redirect("/auth/login");
         }
 
-        // Rest of your code remains the same
+        // Check if username already exists
+        const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("id", user.id)
+            .single();
+
+        if (profileError && profileError.code !== "PGRST116") {
+            console.error("Profile error:", profileError);
+            redirect("/auth/login");
+        }
+
+        if (profile?.username) {
+            redirect("/recipes");
+        }
+
+        return <UsernameForm userId={user.id} />;
     } catch (error) {
         console.error("Username page error:", error);
         redirect("/auth/login");

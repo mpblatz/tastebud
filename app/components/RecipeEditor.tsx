@@ -87,6 +87,14 @@ export function RecipeEditor({ existingRecipe, recipeId, onSave }: RecipeEditorP
         try {
             setIsSaving(true);
 
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+
+            if (!user) {
+                throw new Error("Not authenticated");
+            }
+
             if (recipeId) {
                 // Update existing recipe
                 const { error: recipeError } = await supabase
@@ -153,6 +161,7 @@ export function RecipeEditor({ existingRecipe, recipeId, onSave }: RecipeEditorP
                         prep_time_minutes: recipe.prepTimeMinutes,
                         cook_time_minutes: recipe.cookTimeMinutes,
                         servings: recipe.servings,
+                        user_id: user.id,
                     })
                     .select()
                     .single();

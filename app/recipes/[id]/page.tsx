@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Edit } from "lucide-react";
 
-export default async function RecipePage({ params: { id } }: { params: { id: string } }) {
+export default async function RecipePage(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
+
+    const {
+        id
+    } = params;
+
     const supabase = await createServerClient();
 
     const { data: recipe } = await supabase

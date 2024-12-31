@@ -2,7 +2,7 @@
 import "./globals.css";
 import { createServerClient } from "@/lib/supabase/server";
 import { Navbar } from "@/app/components/Navbar";
-
+import { cookies } from "next/headers";
 import { IBM_Plex_Mono } from "next/font/google";
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -10,16 +10,37 @@ const ibmPlexMono = IBM_Plex_Mono({
     subsets: ["latin"],
     variable: "--font-ibm-plex-mono",
 });
+
+async function getUserProfile(userId: string) {
+    const supabase = await createServerClient();
+    const { data, error } = await supabase.from("profiles").select("username").eq("id", userId).single();
+
+    if (error) {
+        console.error("Error fetching user profile:", error);
+        return null;
+    }
+
+    return data;
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
     const supabase = await createServerClient();
     const {
         data: { session },
     } = await supabase.auth.getSession();
 
+    let userProfile = null;
+    if (session?.user) {
+        userProfile = await getUserProfile(session.user.id);
+    }
+
     return (
         <html lang="en" className={`${ibmPlexMono.variable}`}>
+            <head>
+                <title>tastebud</title>
+            </head>
             <body className="min-h-screen bg-background font-ibm-plex-mono antialiased">
-                {session && <Navbar user={session.user} />}
+                {session && <Navbar user={session.user} username={userProfile?.username} />}
                 <main className="container mx-auto px-4 py-8">{children}</main>
             </body>
         </html>

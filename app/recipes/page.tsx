@@ -41,7 +41,7 @@ export default async function RecipesPage() {
             </div>
 
             {recipes?.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="text-center py-20">
                     <p className="text-gray-600">You haven't created any recipes yet.</p>
                     <div className="flex gap-4 justify-center mt-4">
                         <Button asChild variant="outline">

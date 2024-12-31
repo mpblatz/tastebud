@@ -2,7 +2,13 @@ import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { DatabaseRecipe, RecipeEditor } from "@/app/components/RecipeEditor";
 
-export default async function EditRecipePage({ params: { id } }: { params: { id: string } }) {
+export default async function EditRecipePage(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
+
+    const {
+        id
+    } = params;
+
     const supabase = await createServerClient();
 
     const { data: recipe } = await supabase
