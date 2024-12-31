@@ -24,33 +24,20 @@ export default async function RecipesPage() {
         <div>
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">My Recipes</h1>
-                <div className="flex gap-4">
-                    <Button asChild>
-                        <Link href="/recipes/import" className="flex items-center gap-2">
-                            <Download className="w-4 h-4" />
-                            Import Recipe
-                        </Link>
-                    </Button>
-                    <Button asChild>
-                        <Link href="/recipes/new" className="flex items-center gap-2">
-                            <PlusCircle className="w-4 h-4" />
-                            New Recipe
-                        </Link>
-                    </Button>
-                </div>
+                <Button asChild>
+                    <Link href="/recipes/new" className="flex items-center gap-2">
+                        <PlusCircle className="w-4 h-4" />
+                        New Recipe
+                    </Link>
+                </Button>
             </div>
 
             {recipes?.length === 0 ? (
                 <div className="text-center py-20">
                     <p>You haven't created any recipes yet.</p>
-                    <div className="flex gap-4 justify-center mt-4">
-                        <Button asChild variant="outline">
-                            <Link href="/recipes/import">Import a Recipe</Link>
-                        </Button>
-                        <Button asChild variant="outline">
-                            <Link href="/recipes/new">Create a Recipe</Link>
-                        </Button>
-                    </div>
+                    <Button asChild variant="outline">
+                        <Link href="/recipes/new">Create a Recipe</Link>
+                    </Button>
                 </div>
             ) : (
                 <div className="flex flex-col space-y-4">

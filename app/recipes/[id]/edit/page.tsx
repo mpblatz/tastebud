@@ -1,14 +1,11 @@
 import { createServerClient } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { DatabaseRecipe, RecipeEditor } from "@/app/components/RecipeEditor";
+import { revalidatePath } from "next/cache";
 
 export default async function EditRecipePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
-
-    const {
-        id
-    } = params;
-
+    const { id } = params;
     const supabase = await createServerClient();
 
     const { data: recipe } = await supabase
@@ -62,16 +59,24 @@ export default async function EditRecipePage(props: { params: Promise<{ id: stri
         })),
     };
 
+    async function handleDelete() {
+        "use server";
+        const supabase = await createServerClient();
+
+        // Delete the recipe and all related data (cascade delete should handle components)
+        const { error } = await supabase.from("recipes").delete().eq("id", id);
+
+        if (error) {
+            throw new Error("Failed to delete recipe");
+        }
+
+        revalidatePath("/recipes");
+        redirect("/recipes");
+    }
+
     return (
-        <div>
-            <RecipeEditor
-                existingRecipe={editorData}
-                recipeId={id}
-                onSave={async (data) => {
-                    // Handle save
-                    console.log(data);
-                }}
-            />
+        <div className="mt-8">
+            <RecipeEditor existingRecipe={editorData} recipeId={id} onDelete={handleDelete} />
         </div>
     );
 }
