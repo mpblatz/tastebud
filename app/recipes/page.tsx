@@ -33,10 +33,10 @@ export default async function RecipesPage() {
             </div>
 
             {recipes?.length === 0 ? (
-                <div className="text-center py-20">
+                <div className="text-center py-20 space-y-2">
                     <p>You haven't created any recipes yet.</p>
                     <Button asChild variant="outline">
-                        <Link href="/recipes/new">Create a Recipe</Link>
+                        <Link href="/recipes/new">Create or Upload a Recipe</Link>
                     </Button>
                 </div>
             ) : (

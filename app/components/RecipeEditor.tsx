@@ -292,8 +292,8 @@ export function RecipeEditor({
                                     onClick={onImportUrl}
                                     className="flex items-center gap-2"
                                 >
-                                    <PlusCircle className="w-4 h-4" />
-                                    Import URL
+                                    <LinkIcon className="w-4 h-4" />
+                                    Import from URL
                                 </Button>
                             )}
                             {onImportText && (
@@ -303,8 +303,8 @@ export function RecipeEditor({
                                     onClick={onImportText}
                                     className="flex items-center gap-2"
                                 >
-                                    <PlusCircle className="w-4 h-4" />
-                                    Import Text
+                                    <TextIcon className="w-4 h-4" />
+                                    Import from Plain Text
                                 </Button>
                             )}
                         </div>
