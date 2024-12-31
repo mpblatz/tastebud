@@ -7,9 +7,7 @@ import { Edit } from "lucide-react";
 export default async function RecipePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
 
-    const {
-        id
-    } = params;
+    const { id } = params;
 
     const supabase = await createServerClient();
 
@@ -44,7 +42,7 @@ export default async function RecipePage(props: { params: Promise<{ id: string }
                 </Button>
             </div>
 
-            <div className="flex gap-4 text-sm text-gray-600 mb-8">
+            <div className="flex gap-4 text-sm mb-8">
                 {recipe.prep_time_minutes && <p>Prep Time: {recipe.prep_time_minutes} minutes</p>}
                 {recipe.cook_time_minutes && <p>Cook Time: {recipe.cook_time_minutes} minutes</p>}
                 {recipe.servings && <p>Servings: {recipe.servings}</p>}

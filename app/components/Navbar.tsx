@@ -33,7 +33,7 @@ export function Navbar({ user, username }: { user: User; username?: string }) {
                 <DropdownMenu>
                     <DropdownMenuTrigger className="focus:outline-none">
                         <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-700">welcome, {username}</span>
+                            <span className="text-sm">welcome, {username}</span>
                             <Avatar className="h-8 w-8">
                                 <AvatarImage src="avatar.webp" alt="@shadcn" />
                                 <AvatarFallback className="bg-indigo-100 text-indigo-600">{userInitial}</AvatarFallback>

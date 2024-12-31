@@ -17,7 +17,7 @@ export default async function LoginPage() {
             <div className="max-w-md space-y-8 px-4 flex flex-col">
                 <div className="text-center">
                     <h1 className="text-4xl font-bold">tastebud</h1>
-                    <p className="mt-2 text-gray-600">Sign in to access your recipes</p>
+                    <p className="mt-2">Sign in to access your recipes</p>
                 </div>
                 <LoginButton />
             </div>

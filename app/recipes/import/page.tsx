@@ -53,7 +53,7 @@ export default function ImportRecipePage() {
             <Card className="p-6">
                 <form onSubmit={handleImport} className="space-y-4">
                     <div>
-                        <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="url" className="block text-sm font-medium mb-2">
                             Recipe URL
                         </label>
                         <Input
