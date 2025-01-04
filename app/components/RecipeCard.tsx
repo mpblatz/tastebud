@@ -55,7 +55,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
                         </Button>
                     </CardFooter>
                 </div>
-                <div className="w-[350px] bg-muted flex items-center justify-center border-l">
+                <div className="w-[400px] bg-slate-200 flex items-center justify-center border-l">
                     <div className="text-muted-foreground">
                         <UtensilsCrossed className="w-8 h-8" />
                     </div>
