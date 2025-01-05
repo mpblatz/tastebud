@@ -12,35 +12,7 @@ import { useRouter } from "next/navigation";
 import { RecipeView } from "./RecipeView";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-
-interface RecipeComponent {
-    id: string;
-    name: string;
-    ingredients: string[];
-    instructions: string[];
-}
-
-export interface RecipeData {
-    title: string;
-    prepTimeMinutes?: number;
-    cookTimeMinutes?: number;
-    servings?: number;
-    components: RecipeComponent[];
-}
-
-export interface DatabaseRecipe {
-    id: string;
-    title: string;
-    prep_time_minutes: number | null;
-    cook_time_minutes: number | null;
-    servings: number | null;
-    recipe_components: {
-        id: string;
-        name: string;
-        component_ingredients: { id: string; ingredient: string }[];
-        component_instructions: { id: string; instruction: string }[];
-    }[];
-}
+import { DatabaseRecipe, RecipeData } from "@/types/types";
 
 interface RecipeEditorProps {
     existingRecipe?: DatabaseRecipe | null;
@@ -82,6 +54,7 @@ export function RecipeEditor({
                         name: "",
                         ingredients: [""],
                         instructions: [""],
+                        orderIndex: 0,
                     },
                 ],
             };
@@ -92,11 +65,12 @@ export function RecipeEditor({
             prepTimeMinutes: dbRecipe.prep_time_minutes || undefined,
             cookTimeMinutes: dbRecipe.cook_time_minutes || undefined,
             servings: dbRecipe.servings || undefined,
-            components: dbRecipe.recipe_components.map((component) => ({
+            components: dbRecipe.recipe_components.map((component, index) => ({
                 id: component.id,
                 name: component.name,
                 ingredients: component.component_ingredients.map((i) => i.ingredient),
                 instructions: component.component_instructions.map((i) => i.instruction),
+                orderIndex: index,
             })),
         };
     };
@@ -112,6 +86,7 @@ export function RecipeEditor({
                           name: "",
                           ingredients: [""],
                           instructions: [""],
+                          orderIndex: 0,
                       },
                   ],
               }
@@ -648,6 +623,7 @@ export function RecipeEditor({
                                             name: "",
                                             ingredients: [""],
                                             instructions: [""],
+                                            orderIndex: prev.components.length,
                                         },
                                     ],
                                 }))

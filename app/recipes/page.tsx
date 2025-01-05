@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { RecipeCard } from "@/app/components/RecipeCard";
 import Link from "next/link";
-import { PlusCircle, Download } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default async function RecipesPage() {

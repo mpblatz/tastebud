@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Camera, Upload, Trash2 } from "lucide-react";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { Alert, AlertDescription } from "@/shadcn/components/ui/alert";
-import { Button } from "@/shadcn/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shadcn/components/ui/card";
-import { Progress } from "@/shadcn/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,7 +15,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/shadcn/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 
 interface RecipeImageUploadProps {
     supabase: SupabaseClient;

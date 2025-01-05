@@ -2,13 +2,14 @@
 "use client";
 
 import { useState } from "react";
-import { RecipeData, RecipeEditor, DatabaseRecipe } from "@/app/components/RecipeEditor";
+import { RecipeEditor } from "@/app/components/RecipeEditor";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DatabaseRecipe, RecipeData } from "@/types/types";
 
 export default function NewRecipePage() {
     const router = useRouter();
