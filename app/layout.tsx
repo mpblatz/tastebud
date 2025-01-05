@@ -1,8 +1,7 @@
 // app/layout.tsx
 import "./globals.css";
-import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/app/lib/supabase/server";
 import { Navbar } from "@/app/components/Navbar";
-import { cookies } from "next/headers";
 import { IBM_Plex_Mono } from "next/font/google";
 
 const ibmPlexMono = IBM_Plex_Mono({

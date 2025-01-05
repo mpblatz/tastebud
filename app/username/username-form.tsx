@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/app/types/supabase";
 
 export default function UsernameForm({ userId }: { userId: string }) {
     const [username, setUsername] = useState("");

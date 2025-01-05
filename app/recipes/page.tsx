@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/app/lib/supabase/server";
 import { RecipeCard } from "@/app/components/RecipeCard";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";

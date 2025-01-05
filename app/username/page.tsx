@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/app/types/supabase";
 import UsernameForm from "./username-form";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";

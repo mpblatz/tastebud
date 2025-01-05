@@ -1,7 +1,7 @@
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/app/types/supabase";
 
 export async function middleware(request: NextRequest) {
     // Public paths that don't need authentication

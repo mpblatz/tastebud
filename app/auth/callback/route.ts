@@ -3,8 +3,8 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type { Database } from "@/types/supabase";
-import { createServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/app/types/supabase";
+import { createServerClient } from "@/app/lib/supabase/server";
 
 export async function GET(request: Request) {
     try {

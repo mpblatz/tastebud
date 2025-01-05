@@ -1,5 +1,5 @@
 // app/recipes/[id]/page.tsx
-import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/app/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
