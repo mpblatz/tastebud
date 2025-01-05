@@ -1,7 +1,7 @@
 // components/RecipeView.tsx
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, Users, UtensilsCrossed } from "lucide-react";
+import { AppleIcon, BeefIcon, Clock, FlameIcon, Users, UtensilsCrossed } from "lucide-react";
 
 interface RecipeViewProps {
     recipe: {
@@ -10,6 +10,10 @@ interface RecipeViewProps {
         cookTimeMinutes?: number | null;
         servings?: number | null;
         mainImageUrl?: string | null;
+        calories?: number | null;
+        protein?: number | null;
+        carbs?: number | null;
+        fat?: number | null;
         components: {
             id?: string;
             name: string;
@@ -37,6 +41,8 @@ function formatTime(minutes: number | null | undefined): string {
 }
 
 export function RecipeView({ recipe }: RecipeViewProps) {
+    const showMacros = recipe.calories || recipe.protein || recipe.carbs || recipe.fat;
+
     return (
         <div className="space-y-8">
             {recipe.mainImageUrl && (
@@ -81,6 +87,56 @@ export function RecipeView({ recipe }: RecipeViewProps) {
                     </Card>
                 )}
             </div>
+
+            {showMacros && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Nutrition Facts (per serving)</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-4 gap-4">
+                            {recipe.calories && (
+                                <div className="flex items-center gap-3">
+                                    <FlameIcon className="w-5 h-5 text-muted-foreground" />
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">Calories</p>
+                                        <p className="font-medium">{recipe.calories}</p>
+                                    </div>
+                                </div>
+                            )}
+                            {recipe.protein && (
+                                <div className="flex items-center gap-3">
+                                    <BeefIcon className="w-5 h-5 text-muted-foreground" />
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">Protein</p>
+                                        <p className="font-medium">{recipe.protein}g</p>
+                                    </div>
+                                </div>
+                            )}
+                            {recipe.carbs && (
+                                <div className="flex items-center gap-3">
+                                    <AppleIcon className="w-5 h-5 text-muted-foreground" />
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">Carbs</p>
+                                        <p className="font-medium">{recipe.carbs}g</p>
+                                    </div>
+                                </div>
+                            )}
+                            {recipe.fat && (
+                                <div className="flex items-center gap-3">
+                                    <div className="w-5 h-5 text-muted-foreground flex items-center justify-center font-bold">
+                                        F
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">Fat</p>
+                                        <p className="font-medium">{recipe.fat}g</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             <div className="space-y-8">
                 {recipe.components.map((component, index) => (
