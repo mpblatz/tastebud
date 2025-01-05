@@ -94,6 +94,8 @@ export function RecipeEditor({
 
     const handleSave = async () => {
         try {
+            console.log("Starting handleSave with recipeId:", recipeId);
+            console.log("Current recipe state:", recipe);
             setIsSaving(true);
 
             const {
@@ -105,6 +107,131 @@ export function RecipeEditor({
             }
 
             if (recipeId) {
+                // Delete all related data in the correct order based on foreign key relationships
+                console.log("Starting deletion process for recipe ID:", recipeId);
+
+                // Verify user has access before attempting deletion
+                const {
+                    data: { user },
+                    error: userError,
+                } = await supabase.auth.getUser();
+                if (userError) {
+                    console.error("Auth error:", userError);
+                    throw userError;
+                }
+                console.log("Current user:", user?.id);
+
+                // First verify the recipe exists and user has access
+                const { data: recipeCheck, error: recipeCheckError } = await supabase
+                    .from("recipes")
+                    .select("id, user_id")
+                    .eq("id", recipeId)
+                    .single();
+
+                console.log("Recipe check:", recipeCheck);
+                if (recipeCheckError) {
+                    console.error("Recipe check error:", recipeCheckError);
+                    throw recipeCheckError;
+                }
+
+                if (!recipeCheck) {
+                    console.error("Recipe not found");
+                    throw new Error("Recipe not found");
+                }
+
+                if (recipeCheck.user_id !== user?.id) {
+                    console.error("User does not own this recipe");
+                    throw new Error("Unauthorized");
+                }
+
+                console.log("Starting transaction for recipe update...");
+
+                // Start a transaction
+                const { error: transactionError } = await supabase.rpc("delete_recipe_components", {
+                    recipe_id_param: recipeId,
+                });
+
+                if (transactionError) {
+                    console.error("Transaction error:", transactionError);
+                    throw transactionError;
+                }
+
+                // Verify deletion
+                const { data: afterDelete, error: verifyError } = await supabase
+                    .from("recipe_components")
+                    .select(
+                        `
+                        id,
+                        name,
+                        recipe_id,
+                        component_ingredients ( id ),
+                        component_instructions ( id )
+                    `
+                    )
+                    .eq("recipe_id", recipeId);
+
+                console.log("After deletion check:", afterDelete);
+
+                try {
+                    // 1. First, get all component IDs for this recipe
+                    const { data: components, error: fetchError } = await supabase
+                        .from("recipe_components")
+                        .select("id")
+                        .eq("recipe_id", recipeId);
+
+                    if (fetchError) throw fetchError;
+                    console.log("Found components:", components);
+
+                    if (components && components.length > 0) {
+                        // 2. Delete recipe nutrition (if exists)
+                        const { error: nutritionError } = await supabase
+                            .from("recipe_nutrition")
+                            .delete()
+                            .eq("recipe_id", recipeId);
+
+                        if (nutritionError) throw nutritionError;
+
+                        // 3. Delete all ingredients for all components
+                        const { error: ingredientsError } = await supabase
+                            .from("component_ingredients")
+                            .delete()
+                            .in(
+                                "component_id",
+                                components.map((c) => c.id)
+                            );
+
+                        if (ingredientsError) throw ingredientsError;
+                        console.log("Deleted ingredients");
+
+                        // 4. Delete all instructions for all components
+                        const { error: instructionsError } = await supabase
+                            .from("component_instructions")
+                            .delete()
+                            .in(
+                                "component_id",
+                                components.map((c) => c.id)
+                            );
+
+                        if (instructionsError) throw instructionsError;
+                        console.log("Deleted instructions");
+
+                        // 5. Finally delete the components themselves
+                        const { error: componentsError } = await supabase
+                            .from("recipe_components")
+                            .delete()
+                            .eq("recipe_id", recipeId);
+
+                        if (componentsError) throw componentsError;
+                        console.log("Deleted components");
+                    }
+
+                    // Don't delete the recipe itself since we're going to update it
+                    console.log("Successfully deleted all related data");
+                } catch (error) {
+                    console.error("Error during deletion process:", error);
+                    throw error;
+                }
+
                 // Update existing recipe
                 const { error: recipeError } = await supabase
                     .from("recipes")
@@ -118,9 +245,6 @@ export function RecipeEditor({
 
                 if (recipeError) throw recipeError;
 
-                // Delete existing components and their children
-                await supabase.from("recipe_components").delete().eq("recipe_id", recipeId);
-
                 // Insert new components
                 for (const component of recipe.components) {
                     const { data: newComponent, error: componentError } = await supabase
@@ -128,7 +252,7 @@ export function RecipeEditor({
                         .insert({
                             recipe_id: recipeId,
                             name: component.name,
-                            order_index: recipe.components.indexOf(component),
+                            order_index: component.orderIndex,
                         })
                         .select()
                         .single();
@@ -136,33 +260,45 @@ export function RecipeEditor({
                     if (componentError) throw componentError;
 
                     // Insert ingredients
-                    const ingredientInserts = component.ingredients.map((ingredient, index) => ({
-                        component_id: newComponent.id,
-                        ingredient,
-                        order_index: index,
-                    }));
+                    if (component.ingredients.length > 0) {
+                        const ingredientInserts = component.ingredients
+                            .filter((ingredient) => ingredient.trim() !== "")
+                            .map((ingredient, index) => ({
+                                component_id: newComponent.id,
+                                ingredient,
+                                order_index: index,
+                            }));
 
-                    const { error: ingredientsError } = await supabase
-                        .from("component_ingredients")
-                        .insert(ingredientInserts);
+                        if (ingredientInserts.length > 0) {
+                            const { error: ingredientsError } = await supabase
+                                .from("component_ingredients")
+                                .insert(ingredientInserts);
 
-                    if (ingredientsError) throw ingredientsError;
+                            if (ingredientsError) throw ingredientsError;
+                        }
+                    }
 
                     // Insert instructions
-                    const instructionInserts = component.instructions.map((instruction, index) => ({
-                        component_id: newComponent.id,
-                        instruction,
-                        order_index: index,
-                    }));
+                    if (component.instructions.length > 0) {
+                        const instructionInserts = component.instructions
+                            .filter((instruction) => instruction.trim() !== "")
+                            .map((instruction, index) => ({
+                                component_id: newComponent.id,
+                                instruction,
+                                order_index: index,
+                            }));
 
-                    const { error: instructionsError } = await supabase
-                        .from("component_instructions")
-                        .insert(instructionInserts);
+                        if (instructionInserts.length > 0) {
+                            const { error: instructionsError } = await supabase
+                                .from("component_instructions")
+                                .insert(instructionInserts);
 
-                    if (instructionsError) throw instructionsError;
+                            if (instructionsError) throw instructionsError;
+                        }
+                    }
                 }
             } else {
-                // Create new recipe
+                // Create new recipe logic remains the same...
                 const { data: newRecipe, error: recipeError } = await supabase
                     .from("recipes")
                     .insert({
@@ -184,7 +320,7 @@ export function RecipeEditor({
                         .insert({
                             recipe_id: newRecipe.id,
                             name: component.name,
-                            order_index: recipe.components.indexOf(component),
+                            order_index: component.orderIndex,
                         })
                         .select()
                         .single();
@@ -192,30 +328,42 @@ export function RecipeEditor({
                     if (componentError) throw componentError;
 
                     // Insert ingredients
-                    const ingredientInserts = component.ingredients.map((ingredient, index) => ({
-                        component_id: newComponent.id,
-                        ingredient,
-                        order_index: index,
-                    }));
+                    if (component.ingredients.length > 0) {
+                        const ingredientInserts = component.ingredients
+                            .filter((ingredient) => ingredient.trim() !== "")
+                            .map((ingredient, index) => ({
+                                component_id: newComponent.id,
+                                ingredient,
+                                order_index: index,
+                            }));
 
-                    const { error: ingredientsError } = await supabase
-                        .from("component_ingredients")
-                        .insert(ingredientInserts);
+                        if (ingredientInserts.length > 0) {
+                            const { error: ingredientsError } = await supabase
+                                .from("component_ingredients")
+                                .insert(ingredientInserts);
 
-                    if (ingredientsError) throw ingredientsError;
+                            if (ingredientsError) throw ingredientsError;
+                        }
+                    }
 
                     // Insert instructions
-                    const instructionInserts = component.instructions.map((instruction, index) => ({
-                        component_id: newComponent.id,
-                        instruction,
-                        order_index: index,
-                    }));
+                    if (component.instructions.length > 0) {
+                        const instructionInserts = component.instructions
+                            .filter((instruction) => instruction.trim() !== "")
+                            .map((instruction, index) => ({
+                                component_id: newComponent.id,
+                                instruction,
+                                order_index: index,
+                            }));
 
-                    const { error: instructionsError } = await supabase
-                        .from("component_instructions")
-                        .insert(instructionInserts);
+                        if (instructionInserts.length > 0) {
+                            const { error: instructionsError } = await supabase
+                                .from("component_instructions")
+                                .insert(instructionInserts);
 
-                    if (instructionsError) throw instructionsError;
+                            if (instructionsError) throw instructionsError;
+                        }
+                    }
                 }
             }
 
