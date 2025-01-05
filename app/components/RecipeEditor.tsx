@@ -13,6 +13,7 @@ import { RecipeView } from "./RecipeView";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { DatabaseRecipe, RecipeData } from "@/app/types";
+import RecipeImageUpload from "./RecipeImageUpload";
 
 interface RecipeEditorProps {
     existingRecipe?: DatabaseRecipe | null;
@@ -33,6 +34,7 @@ export function RecipeEditor({
 }: RecipeEditorProps) {
     const router = useRouter();
     const supabase = createClientComponentClient();
+    const [mainImageUrl, setMainImageUrl] = useState<string | null>(existingRecipe?.main_image_url || null);
     const [isPreview, setIsPreview] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -48,6 +50,7 @@ export function RecipeEditor({
         if (!dbRecipe) {
             return {
                 title: "",
+                mainImageUrl: null,
                 components: [
                     {
                         id: "1",
@@ -59,12 +62,12 @@ export function RecipeEditor({
                 ],
             };
         }
-
         return {
             title: dbRecipe.title,
             prepTimeMinutes: dbRecipe.prep_time_minutes || undefined,
             cookTimeMinutes: dbRecipe.cook_time_minutes || undefined,
             servings: dbRecipe.servings || undefined,
+            mainImageUrl: dbRecipe.main_image_url || null,
             components: dbRecipe.recipe_components.map((component, index) => ({
                 id: component.id,
                 name: component.name,
@@ -240,6 +243,7 @@ export function RecipeEditor({
                         prep_time_minutes: recipe.prepTimeMinutes,
                         cook_time_minutes: recipe.cookTimeMinutes,
                         servings: recipe.servings,
+                        main_image_url: mainImageUrl,
                     })
                     .eq("id", recipeId);
 
@@ -306,6 +310,7 @@ export function RecipeEditor({
                         prep_time_minutes: recipe.prepTimeMinutes,
                         cook_time_minutes: recipe.cookTimeMinutes,
                         servings: recipe.servings,
+                        main_image_url: mainImageUrl,
                         user_id: user.id,
                     })
                     .select()
@@ -489,7 +494,7 @@ export function RecipeEditor({
             </div>
 
             {isPreview ? (
-                <RecipeView recipe={recipe} />
+                <RecipeView recipe={{ ...recipe, mainImageUrl }} />
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card className="mt-6">
@@ -558,6 +563,19 @@ export function RecipeEditor({
                             </div>
                         </CardContent>
                     </Card>
+
+                    <RecipeImageUpload
+                        supabase={supabase}
+                        recipeId={recipeId || "temp"}
+                        currentImageUrl={mainImageUrl}
+                        onImageUpdate={(imageUrl) => {
+                            setMainImageUrl(imageUrl);
+                            setRecipe((prev) => ({
+                                ...prev,
+                                mainImageUrl: imageUrl,
+                            }));
+                        }}
+                    />
 
                     {recipe.components.map((component, componentIndex) => (
                         <Card key={component.id}>

@@ -2,12 +2,12 @@
 import "./globals.css";
 import { createServerClient } from "@/app/lib/supabase/server";
 import { Navbar } from "@/app/components/Navbar";
-import { IBM_Plex_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 
-const ibmPlexMono = IBM_Plex_Mono({
+const poppins = Poppins({
     weight: ["400", "500", "600", "700"],
     subsets: ["latin"],
-    variable: "--font-ibm-plex-mono",
+    variable: "--font-poppins",
 });
 
 async function getUserProfile(userId: string) {
@@ -34,11 +34,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     }
 
     return (
-        <html lang="en" className={`${ibmPlexMono.variable}`}>
+        <html lang="en" className={`${poppins.variable}`}>
             <head>
                 <title>tastebud</title>
             </head>
-            <body className="min-h-screen bg-background font-ibm-plex-mono antialiased">
+            <body className="min-h-screen bg-background font-poppins antialiased">
                 {session && <Navbar user={session.user} username={userProfile?.username} />}
                 <main className="container mx-auto px-4 py-8 w-[800px]">{children}</main>
             </body>

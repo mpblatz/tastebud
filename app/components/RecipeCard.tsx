@@ -10,13 +10,14 @@ interface RecipeCardProps {
         prep_time_minutes?: number | null;
         cook_time_minutes?: number | null;
         servings?: number | null;
+        main_image_url?: string | null;
         created_at: string;
     };
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
     return (
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow overflow-hidden">
             <div className="flex">
                 <div className="flex-1 min-w-0">
                     {/* min-w-0 prevents flex child from expanding */}
@@ -55,10 +56,14 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
                         </Button>
                     </CardFooter>
                 </div>
-                <div className="w-[400px] bg-slate-200 flex items-center justify-center border-l">
-                    <div className="text-muted-foreground">
-                        <UtensilsCrossed className="w-8 h-8" />
-                    </div>
+                <div className="w-[400px] h-[180px] bg-slate-200 flex items-center justify-center border-l overflow-hidden">
+                    {recipe.main_image_url ? (
+                        <img src={recipe.main_image_url} alt={recipe.title} className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="text-muted-foreground">
+                            <UtensilsCrossed className="w-8 h-8" />
+                        </div>
+                    )}
                 </div>
             </div>
         </Card>

@@ -12,25 +12,12 @@ export default async function EditRecipePage(props: { params: Promise<{ id: stri
     const { data: recipe } = await supabase
         .from("recipes")
         .select(
-            `
-            id,
-            title,
-            prep_time_minutes,
-            cook_time_minutes,
-            servings,
+            `*,
             recipe_components (
-                id,
-                name,
-                component_ingredients (
-                    id,
-                    ingredient
-                ),
-                component_instructions (
-                    id,
-                    instruction
-                )
-            )
-        `
+                *,
+                component_ingredients (*),
+                component_instructions (*)
+            )`
         )
         .eq("id", id)
         .single();
@@ -46,6 +33,7 @@ export default async function EditRecipePage(props: { params: Promise<{ id: stri
         prep_time_minutes: recipe.prep_time_minutes,
         cook_time_minutes: recipe.cook_time_minutes,
         servings: recipe.servings,
+        main_image_url: recipe.main_image_url,
         recipe_components: recipe.recipe_components.map((component) => ({
             id: component.id,
             name: component.name,

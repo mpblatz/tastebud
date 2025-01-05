@@ -9,6 +9,7 @@ interface RecipeViewProps {
         prepTimeMinutes?: number | null;
         cookTimeMinutes?: number | null;
         servings?: number | null;
+        mainImageUrl?: string | null;
         components: {
             id?: string;
             name: string;
@@ -38,6 +39,11 @@ function formatTime(minutes: number | null | undefined): string {
 export function RecipeView({ recipe }: RecipeViewProps) {
     return (
         <div className="space-y-8">
+            {recipe.mainImageUrl && (
+                <div className="w-full h-96 relative overflow-hidden rounded-lg">
+                    <img src={recipe.mainImageUrl} alt={recipe.title} className="w-full h-full object-cover" />
+                </div>
+            )}
             <div className="grid grid-cols-3 gap-4 mb-8">
                 {recipe.prepTimeMinutes && recipe.prepTimeMinutes > 0 && (
                     <Card>

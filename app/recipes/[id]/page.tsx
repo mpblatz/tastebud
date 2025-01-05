@@ -34,6 +34,7 @@ export default async function RecipePage(props: { params: Promise<{ id: string }
         prepTimeMinutes: recipe.prep_time_minutes,
         cookTimeMinutes: recipe.cook_time_minutes,
         servings: recipe.servings,
+        mainImageUrl: recipe.main_image_url,
         components: recipe.recipe_components.map((component) => ({
             id: component.id,
             name: component.name,

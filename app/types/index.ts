@@ -30,6 +30,7 @@ export interface RecipeData {
     cookTimeMinutes?: number;
     servings?: number;
     components: RecipeComponent[];
+    mainImageUrl?: string | null;
 }
 
 export interface DatabaseRecipe {
@@ -38,6 +39,7 @@ export interface DatabaseRecipe {
     prep_time_minutes: number | null;
     cook_time_minutes: number | null;
     servings: number | null;
+    main_image_url?: string | null;
     recipe_components: {
         id: string;
         name: string;

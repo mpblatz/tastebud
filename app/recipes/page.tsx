@@ -15,6 +15,7 @@ export default async function RecipesPage() {
       title,
       prep_time_minutes,
       cook_time_minutes,
+      main_image_url,
       created_at
     `
         )

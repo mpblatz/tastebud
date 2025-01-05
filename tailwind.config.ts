@@ -52,7 +52,7 @@ export default {
                 },
             },
             fontFamily: {
-                "ibm-plex-mono": ["var(--font-ibm-plex-mono)", "monospace"],
+                poppins: ["var(--font-poppins)"],
             },
             borderRadius: {
                 lg: "var(--radius)",
