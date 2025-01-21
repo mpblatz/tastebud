@@ -1,4 +1,3 @@
-// lib/recipe-scraper/dictionaries.ts
 export const cookingVerbs = [
     "add",
     "bake",

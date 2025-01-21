@@ -111,48 +111,17 @@ export type Database = {
                     }
                 ];
             };
-            recipe_nutrition: {
+            recipes: {
                 Row: {
                     calories: number | null;
                     carbs_grams: number | null;
-                    fat_grams: number | null;
-                    id: string;
-                    protein_grams: number | null;
-                    recipe_id: string;
-                };
-                Insert: {
-                    calories?: number | null;
-                    carbs_grams?: number | null;
-                    fat_grams?: number | null;
-                    id?: string;
-                    protein_grams?: number | null;
-                    recipe_id: string;
-                };
-                Update: {
-                    calories?: number | null;
-                    carbs_grams?: number | null;
-                    fat_grams?: number | null;
-                    id?: string;
-                    protein_grams?: number | null;
-                    recipe_id?: string;
-                };
-                Relationships: [
-                    {
-                        foreignKeyName: "recipe_nutrition_recipe_id_fkey";
-                        columns: ["recipe_id"];
-                        isOneToOne: false;
-                        referencedRelation: "recipes";
-                        referencedColumns: ["id"];
-                    }
-                ];
-            };
-            recipes: {
-                Row: {
                     cook_time_minutes: number | null;
                     created_at: string;
+                    fat_grams: number | null;
                     id: string;
                     main_image_url: string | null;
                     prep_time_minutes: number | null;
+                    protein_grams: number | null;
                     search_vector: unknown | null;
                     servings: number | null;
                     source_url: string | null;
@@ -161,11 +130,15 @@ export type Database = {
                     user_id: string;
                 };
                 Insert: {
+                    calories?: number | null;
+                    carbs_grams?: number | null;
                     cook_time_minutes?: number | null;
                     created_at?: string;
+                    fat_grams?: number | null;
                     id?: string;
                     main_image_url?: string | null;
                     prep_time_minutes?: number | null;
+                    protein_grams?: number | null;
                     search_vector?: unknown | null;
                     servings?: number | null;
                     source_url?: string | null;
@@ -174,11 +147,15 @@ export type Database = {
                     user_id: string;
                 };
                 Update: {
+                    calories?: number | null;
+                    carbs_grams?: number | null;
                     cook_time_minutes?: number | null;
                     created_at?: string;
+                    fat_grams?: number | null;
                     id?: string;
                     main_image_url?: string | null;
                     prep_time_minutes?: number | null;
+                    protein_grams?: number | null;
                     search_vector?: unknown | null;
                     servings?: number | null;
                     source_url?: string | null;
@@ -193,7 +170,12 @@ export type Database = {
             [_ in never]: never;
         };
         Functions: {
-            [_ in never]: never;
+            delete_recipe_components: {
+                Args: {
+                    recipe_id_param: string;
+                };
+                Returns: undefined;
+            };
         };
         Enums: {
             [_ in never]: never;

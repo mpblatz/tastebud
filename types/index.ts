@@ -26,11 +26,15 @@ export interface RecipeNutrition {
 
 export interface RecipeData {
     title: string;
-    prepTimeMinutes?: number;
-    cookTimeMinutes?: number;
-    servings?: number;
+    prepTimeMinutes?: number | null;
+    cookTimeMinutes?: number | null;
+    servings?: number | null;
     components: RecipeComponent[];
     mainImageUrl?: string | null;
+    calories?: number | null;
+    proteinGrams?: number | null;
+    fatGrams?: number | null;
+    carbsGrams?: number | null;
 }
 
 export interface DatabaseRecipe {
@@ -40,6 +44,10 @@ export interface DatabaseRecipe {
     cook_time_minutes: number | null;
     servings: number | null;
     main_image_url?: string | null;
+    calories?: number | null;
+    protein_grams?: number | null;
+    fat_grams?: number | null;
+    carbs_grams?: number | null;
     recipe_components: {
         id: string;
         name: string;

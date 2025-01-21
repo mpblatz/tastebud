@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,6 +68,10 @@ export function RecipeEditor({
             cookTimeMinutes: dbRecipe.cook_time_minutes || undefined,
             servings: dbRecipe.servings || undefined,
             mainImageUrl: dbRecipe.main_image_url || null,
+            calories: dbRecipe.calories || undefined,
+            fatGrams: dbRecipe.fat_grams || undefined,
+            carbsGrams: dbRecipe.carbs_grams || undefined,
+            proteinGrams: dbRecipe.protein_grams || undefined,
             components: dbRecipe.recipe_components.map((component, index) => ({
                 id: component.id,
                 name: component.name,
@@ -186,14 +190,6 @@ export function RecipeEditor({
                     console.log("Found components:", components);
 
                     if (components && components.length > 0) {
-                        // 2. Delete recipe nutrition (if exists)
-                        const { error: nutritionError } = await supabase
-                            .from("recipe_nutrition")
-                            .delete()
-                            .eq("recipe_id", recipeId);
-
-                        if (nutritionError) throw nutritionError;
-
                         // 3. Delete all ingredients for all components
                         const { error: ingredientsError } = await supabase
                             .from("component_ingredients")
@@ -244,6 +240,10 @@ export function RecipeEditor({
                         cook_time_minutes: recipe.cookTimeMinutes,
                         servings: recipe.servings,
                         main_image_url: mainImageUrl,
+                        calories: recipe.calories,
+                        protein_grams: recipe.proteinGrams,
+                        carbs_grams: recipe.carbsGrams,
+                        fat_grams: recipe.fatGrams,
                     })
                     .eq("id", recipeId);
 
@@ -311,6 +311,10 @@ export function RecipeEditor({
                         cook_time_minutes: recipe.cookTimeMinutes,
                         servings: recipe.servings,
                         main_image_url: mainImageUrl,
+                        calories: recipe.calories,
+                        protein_grams: recipe.proteinGrams,
+                        carbs_grams: recipe.carbsGrams,
+                        fat_grams: recipe.fatGrams,
                         user_id: user.id,
                     })
                     .select()
@@ -498,7 +502,10 @@ export function RecipeEditor({
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card className="mt-6">
-                        <CardContent className="pt-6">
+                        <CardHeader>
+                            <CardTitle>General Information</CardTitle>
+                        </CardHeader>
+                        <CardContent>
                             <div className="space-y-4">
                                 <div>
                                     <Label htmlFor="title">Recipe Title</Label>
@@ -564,6 +571,76 @@ export function RecipeEditor({
                         </CardContent>
                     </Card>
 
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Nutrition Information</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-4 gap-4">
+                                <div>
+                                    <Label htmlFor="calories">Calories (kcal)</Label>
+                                    <Input
+                                        id="calories"
+                                        type="number"
+                                        value={recipe.calories || ""}
+                                        onChange={(e) =>
+                                            setRecipe((prev) => ({
+                                                ...prev,
+                                                calories: e.target.value ? Number(e.target.value) : undefined,
+                                            }))
+                                        }
+                                        disabled={isPreview}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="protein">Protein (grams)</Label>
+                                    <Input
+                                        id="protein"
+                                        type="number"
+                                        value={recipe.proteinGrams || ""}
+                                        onChange={(e) =>
+                                            setRecipe((prev) => ({
+                                                ...prev,
+                                                proteinGrams: e.target.value ? Number(e.target.value) : undefined,
+                                            }))
+                                        }
+                                        disabled={isPreview}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="carbs">Carbs (grams)</Label>
+                                    <Input
+                                        id="carbs"
+                                        type="number"
+                                        value={recipe.carbsGrams || ""}
+                                        onChange={(e) =>
+                                            setRecipe((prev) => ({
+                                                ...prev,
+                                                carbsGrams: e.target.value ? Number(e.target.value) : undefined,
+                                            }))
+                                        }
+                                        disabled={isPreview}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="fat">Fat (grams)</Label>
+                                    <Input
+                                        id="fat"
+                                        type="number"
+                                        value={recipe.fatGrams || ""}
+                                        onChange={(e) =>
+                                            setRecipe((prev) => ({
+                                                ...prev,
+                                                fatGrams: e.target.value ? Number(e.target.value) : undefined,
+                                            }))
+                                        }
+                                        disabled={isPreview}
+                                    />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
                     <RecipeImageUpload
                         supabase={supabase}
                         recipeId={recipeId || "temp"}
@@ -579,9 +656,28 @@ export function RecipeEditor({
 
                     {recipe.components.map((component, componentIndex) => (
                         <Card key={component.id}>
-                            <CardContent className="pt-6">
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <CardTitle>Component {componentIndex + 1}</CardTitle>
+                                {!isPreview && recipe.components.length > 1 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="ml-2"
+                                        onClick={() =>
+                                            setRecipe((prev) => ({
+                                                ...prev,
+                                                components: prev.components.filter((_, i) => i !== componentIndex),
+                                            }))
+                                        }
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </CardHeader>
+                            <CardContent>
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center">
+                                    <div>
                                         <div className="flex-1">
                                             <Label htmlFor={`component-${component.id}-name`}>Component Name</Label>
                                             <Input
@@ -598,24 +694,6 @@ export function RecipeEditor({
                                                 disabled={isPreview}
                                             />
                                         </div>
-                                        {!isPreview && recipe.components.length > 1 && (
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="icon"
-                                                className="ml-2"
-                                                onClick={() =>
-                                                    setRecipe((prev) => ({
-                                                        ...prev,
-                                                        components: prev.components.filter(
-                                                            (_, i) => i !== componentIndex
-                                                        ),
-                                                    }))
-                                                }
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        )}
                                     </div>
 
                                     <div>

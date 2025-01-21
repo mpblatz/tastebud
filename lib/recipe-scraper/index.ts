@@ -1,4 +1,3 @@
-// lib/recipe-scraper/index.ts
 import { load } from "cheerio";
 import { cookingVerbs, foodItems, units } from "./dictionaries";
 
@@ -50,6 +49,8 @@ function extractStructuredData($: cheerio.Root): ScrapedRecipe | null {
         .find((data: JSON) => data !== null);
 
     if (!jsonLdScript) return null;
+
+    console.log("SCRAPED DATA: ", jsonLdScript);
 
     // Extract nutrition information
     const nutrition = jsonLdScript.nutrition || {};

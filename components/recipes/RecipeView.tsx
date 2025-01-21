@@ -1,27 +1,18 @@
 // components/RecipeView.tsx
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AppleIcon, BeefIcon, Clock, FlameIcon, Users, UtensilsCrossed } from "lucide-react";
-
-interface RecipeViewProps {
-    recipe: {
-        title: string;
-        prepTimeMinutes?: number | null;
-        cookTimeMinutes?: number | null;
-        servings?: number | null;
-        mainImageUrl?: string | null;
-        calories?: number | null;
-        protein?: number | null;
-        carbs?: number | null;
-        fat?: number | null;
-        components: {
-            id?: string;
-            name: string;
-            ingredients: string[];
-            instructions: string[];
-        }[];
-    };
-}
+import {
+    AppleIcon,
+    BeefIcon,
+    Clock,
+    DessertIcon,
+    EggFriedIcon,
+    FlameIcon,
+    Users,
+    UtensilsCrossed,
+    UtensilsCrossedIcon,
+} from "lucide-react";
+import { RecipeData } from "@/types";
 
 function formatTime(minutes: number | null | undefined): string {
     if (!minutes) return "";
@@ -40,8 +31,8 @@ function formatTime(minutes: number | null | undefined): string {
     return `${hours} ${hours === 1 ? "hr" : "hrs"} ${remainingMinutes} mins`;
 }
 
-export function RecipeView({ recipe }: RecipeViewProps) {
-    const showMacros = recipe.calories || recipe.protein || recipe.carbs || recipe.fat;
+export function RecipeView({ recipe }: { recipe: RecipeData }) {
+    const showMacros = recipe.calories || recipe.proteinGrams || recipe.carbsGrams || recipe.fatGrams;
 
     return (
         <div className="space-y-8">
@@ -104,32 +95,30 @@ export function RecipeView({ recipe }: RecipeViewProps) {
                                     </div>
                                 </div>
                             )}
-                            {recipe.protein && (
+                            {recipe.proteinGrams && (
                                 <div className="flex items-center gap-3">
                                     <BeefIcon className="w-5 h-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">Protein</p>
-                                        <p className="font-medium">{recipe.protein}g</p>
+                                        <p className="font-medium">{recipe.proteinGrams}g</p>
                                     </div>
                                 </div>
                             )}
-                            {recipe.carbs && (
+                            {recipe.carbsGrams && (
                                 <div className="flex items-center gap-3">
                                     <AppleIcon className="w-5 h-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">Carbs</p>
-                                        <p className="font-medium">{recipe.carbs}g</p>
+                                        <p className="font-medium">{recipe.carbsGrams}g</p>
                                     </div>
                                 </div>
                             )}
-                            {recipe.fat && (
+                            {recipe.fatGrams && (
                                 <div className="flex items-center gap-3">
-                                    <div className="w-5 h-5 text-muted-foreground flex items-center justify-center font-bold">
-                                        F
-                                    </div>
+                                    <DessertIcon className="w-5 h-5 text-muted-foreground" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">Fat</p>
-                                        <p className="font-medium">{recipe.fat}g</p>
+                                        <p className="font-medium">{recipe.fatGrams}g</p>
                                     </div>
                                 </div>
                             )}

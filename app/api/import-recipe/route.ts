@@ -1,4 +1,3 @@
-// app/api/import-recipe/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { scrapeRecipe } from "@/lib/recipe-scraper";
 import { DatabaseRecipe } from "@/types";
@@ -21,6 +20,10 @@ export async function POST(request: NextRequest) {
             prep_time_minutes: scrapedRecipe.prep_time_minutes || null,
             cook_time_minutes: scrapedRecipe.cook_time_minutes || null,
             servings: scrapedRecipe.servings || null,
+            calories: scrapedRecipe.calories,
+            protein_grams: scrapedRecipe.protein,
+            carbs_grams: scrapedRecipe.carbs,
+            fat_grams: scrapedRecipe.fat,
             recipe_components: [
                 {
                     id: crypto.randomUUID(),

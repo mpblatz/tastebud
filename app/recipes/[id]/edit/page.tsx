@@ -33,6 +33,10 @@ export default async function EditRecipePage(props: { params: Promise<{ id: stri
         prep_time_minutes: recipe.prep_time_minutes,
         cook_time_minutes: recipe.cook_time_minutes,
         servings: recipe.servings,
+        calories: recipe.calories,
+        protein_grams: recipe.protein_grams,
+        carbs_grams: recipe.carbs_grams,
+        fat_grams: recipe.fat_grams,
         main_image_url: recipe.main_image_url,
         recipe_components: recipe.recipe_components.map((component) => ({
             id: component.id,
