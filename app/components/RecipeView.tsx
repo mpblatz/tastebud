@@ -144,7 +144,7 @@ export function RecipeView({ recipe }: RecipeViewProps) {
                         <CardHeader className="bg-muted/50">
                             <CardTitle>{component.name || "Main Recipe"}</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-col space-y-8">
+                        <CardContent className="flex flex-col space-y-8 mt-4">
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">Ingredients</h3>
                                 <ul className="space-y-2">

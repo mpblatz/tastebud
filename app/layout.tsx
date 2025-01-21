@@ -1,8 +1,8 @@
-// app/layout.tsx
 import "./globals.css";
 import { createServerClient } from "@/app/lib/supabase/server";
 import { Navbar } from "@/app/components/Navbar";
 import { Poppins } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const poppins = Poppins({
     weight: ["400", "500", "600", "700"],
@@ -34,13 +34,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     }
 
     return (
-        <html lang="en" className={`${poppins.variable}`}>
-            <head>
-                <title>tastebud</title>
-            </head>
+        <html lang="en" suppressHydrationWarning className={poppins.variable}>
             <body className="min-h-screen bg-background font-poppins antialiased">
-                {session && <Navbar user={session.user} username={userProfile?.username} />}
-                <main className="container mx-auto px-4 py-8 w-[800px]">{children}</main>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                    storageKey="tastebud-theme"
+                    forcedTheme={undefined}
+                >
+                    <div className="contents">
+                        {session && <Navbar user={session.user} username={userProfile?.username} />}
+                        <main className="container mx-auto px-4 py-8 w-[800px]">{children}</main>
+                    </div>
+                </ThemeProvider>
             </body>
         </html>
     );
