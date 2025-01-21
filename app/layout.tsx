@@ -1,14 +1,24 @@
-import "./globals.css";
-import { createServerClient } from "@/app/lib/supabase/server";
-import { Navbar } from "@/app/components/Navbar";
+import "@/styles/globals.css";
+import { createServerClient } from "@/lib/supabase/server";
+import { Navbar } from "@/components/layout/Navbar";
 import { Poppins } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import type { Metadata } from "next";
 
 const poppins = Poppins({
     weight: ["400", "500", "600", "700"],
     subsets: ["latin"],
     variable: "--font-poppins",
 });
+
+export const metadata: Metadata = {
+    title: "tastebud",
+    description: "Your personal recipe collection",
+    icons: {
+        icon: "/avatar.webp",
+        apple: "/apple-icon.png",
+    },
+};
 
 async function getUserProfile(userId: string) {
     const supabase = await createServerClient();

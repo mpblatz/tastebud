@@ -22,7 +22,7 @@ export function Navbar({ user, username }: { user: User; username?: string }) {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        window.location.href = "/auth/login";
+        window.location.href = "/login";
     };
 
     // Get the first letter of the username for the avatar fallback

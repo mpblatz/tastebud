@@ -1,7 +1,7 @@
 // app/api/import-recipe/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { scrapeRecipe } from "@/app/lib/recipe-scraper";
-import { DatabaseRecipe } from "@/app/types";
+import { scrapeRecipe } from "@/lib/recipe-scraper";
+import { DatabaseRecipe } from "@/types";
 
 export async function POST(request: NextRequest) {
     try {

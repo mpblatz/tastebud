@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import type { Database } from "@/app/types/supabase";
+import type { Database } from "@/types/supabase";
 import UsernameForm from "./username-form";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
@@ -15,7 +15,7 @@ export default async function UsernamePage() {
         } = await supabase.auth.getUser();
 
         if (userError || !user) {
-            redirect("/auth/login");
+            redirect("/login");
         }
 
         // Check if username already exists
@@ -27,7 +27,7 @@ export default async function UsernamePage() {
 
         if (profileError && profileError.code !== "PGRST116") {
             console.error("Profile error:", profileError);
-            redirect("/auth/login");
+            redirect("/login");
         }
 
         if (profile?.username) {
@@ -37,6 +37,6 @@ export default async function UsernamePage() {
         return <UsernameForm userId={user.id} />;
     } catch (error) {
         console.error("Username page error:", error);
-        redirect("/auth/login");
+        redirect("/login");
     }
 }

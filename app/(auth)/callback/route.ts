@@ -3,8 +3,8 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import type { Database } from "@/app/types/supabase";
-import { createServerClient } from "@/app/lib/supabase/server";
+import type { Database } from "@/types/supabase";
+import { createServerClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
     try {
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
         const code = requestUrl.searchParams.get("code");
 
         if (!code) {
-            return NextResponse.redirect(new URL("/auth/login", requestUrl.origin));
+            return NextResponse.redirect(new URL("/login", requestUrl.origin));
         }
 
         // Use RouteHandlerClient for session exchange
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
         if (sessionError) {
             console.error("Session error:", sessionError);
-            return NextResponse.redirect(new URL("/auth/login", requestUrl.origin));
+            return NextResponse.redirect(new URL("/login", requestUrl.origin));
         }
 
         // Use ServerClient for data operations
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 
         if (userError || !user) {
             console.error("User error:", userError);
-            return NextResponse.redirect(new URL("/auth/login", requestUrl.origin));
+            return NextResponse.redirect(new URL("/login", requestUrl.origin));
         }
 
         // Check if user has username
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
 
         if (profileError && profileError.code !== "PGRST116") {
             console.error("Profile error:", profileError);
-            return NextResponse.redirect(new URL("/auth/login", requestUrl.origin));
+            return NextResponse.redirect(new URL("/login", requestUrl.origin));
         }
 
         // Redirect based on username existence
@@ -62,6 +62,6 @@ export async function GET(request: Request) {
         return NextResponse.redirect(redirectUrl);
     } catch (error) {
         console.error("Callback error:", error);
-        return NextResponse.redirect(new URL("/auth/login", request.url));
+        return NextResponse.redirect(new URL("/login", request.url));
     }
 }

@@ -1,8 +1,8 @@
-import { createServerClient } from "@/app/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
-import { RecipeEditor } from "@/app/components/RecipeEditor";
+import { RecipeEditor } from "@/components/recipes/RecipeEditor";
 import { revalidatePath } from "next/cache";
-import { DatabaseRecipe } from "@/app/types";
+import { DatabaseRecipe } from "@/types";
 
 export default async function EditRecipePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;

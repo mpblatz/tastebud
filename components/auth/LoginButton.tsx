@@ -1,7 +1,7 @@
 "use client";
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/app/types/supabase";
+import { Database } from "@/types/supabase";
 import { Button } from "@/components/ui/button";
 
 export default function LoginButton() {
@@ -12,7 +12,7 @@ export default function LoginButton() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                    redirectTo: `${location.origin}/auth/callback`,
+                    redirectTo: `${location.origin}/callback`,
                 },
             });
 

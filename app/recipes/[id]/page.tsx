@@ -1,10 +1,10 @@
 // app/recipes/[id]/page.tsx
-import { createServerClient } from "@/app/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Edit } from "lucide-react";
-import { RecipeView } from "@/app/components/RecipeView";
+import { RecipeView } from "@/components/recipes/RecipeView";
 
 export default async function RecipePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;

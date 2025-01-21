@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { RecipeView } from "./RecipeView";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { DatabaseRecipe, RecipeData } from "@/app/types";
+import { DatabaseRecipe, RecipeData } from "@/types";
 import RecipeImageUpload from "./RecipeImageUpload";
 
 interface RecipeEditorProps {

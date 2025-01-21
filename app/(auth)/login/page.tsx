@@ -1,6 +1,6 @@
-import { createServerClient } from "@/app/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import LoginButton from "@/app/components/auth/LoginButton";
+import LoginButton from "@/components/auth/LoginButton";
 
 export default async function LoginPage() {
     const supabase = await createServerClient();
