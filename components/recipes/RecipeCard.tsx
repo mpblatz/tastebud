@@ -1,20 +1,9 @@
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Clock, Users, ChefHat, UtensilsCrossed } from "lucide-react";
+import { DatabaseRecipe } from "@/types";
 
-interface RecipeCardProps {
-    recipe: {
-        id: string;
-        title: string;
-        prep_time_minutes?: number | null;
-        cook_time_minutes?: number | null;
-        servings?: number | null;
-        main_image_url?: string | null;
-        created_at: string;
-    };
-}
-
-export function RecipeCard({ recipe }: RecipeCardProps) {
+export function RecipeCard({ recipe }: { recipe: DatabaseRecipe }) {
     return (
         <Link href={`/recipes/${recipe.id}`}>
             <Card className="hover:shadow-lg transition-shadow overflow-hidden">
@@ -22,7 +11,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
                     <div className="flex-1 min-w-0">
                         {/* min-w-0 prevents flex child from expanding */}
                         <CardHeader>
-                            <CardTitle className="line-clamp-2">{recipe.title}</CardTitle>
+                            <CardTitle className="line-clamp-2 text-xl">{recipe.title}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2 text-sm text-muted-foreground">

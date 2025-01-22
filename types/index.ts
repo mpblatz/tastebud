@@ -1,14 +1,3 @@
-export interface Recipe {
-    id: string;
-    title: string;
-    prepTimeMinutes?: number;
-    cookTimeMinutes?: number;
-    servings?: number;
-    sourceUrl?: string;
-    components: RecipeComponent[];
-    nutrition?: RecipeNutrition;
-}
-
 export interface RecipeComponent {
     id: string;
     name: string;
@@ -29,12 +18,13 @@ export interface RecipeData {
     prepTimeMinutes?: number | null;
     cookTimeMinutes?: number | null;
     servings?: number | null;
-    components: RecipeComponent[];
     mainImageUrl?: string | null;
     calories?: number | null;
     proteinGrams?: number | null;
     fatGrams?: number | null;
     carbsGrams?: number | null;
+    components: RecipeComponent[];
+    created_at?: string | null;
 }
 
 export interface DatabaseRecipe {
@@ -54,4 +44,5 @@ export interface DatabaseRecipe {
         component_ingredients: { id: string; ingredient: string }[];
         component_instructions: { id: string; instruction: string }[];
     }[];
+    created_at?: string | null;
 }
