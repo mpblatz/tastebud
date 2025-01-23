@@ -25,6 +25,8 @@ export async function scrapeRecipe(url: string): Promise<ScrapedRecipe> {
         return structuredData;
     }
 
+    throw new Error("");
+
     // Try microdata if JSON-LD fails
     const microdata = extractMicrodata($);
     if (microdata) {

@@ -62,9 +62,9 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                     <img src={recipe.mainImageUrl} alt={recipe.title} className="w-full h-full object-cover" />
                 </div>
             )}
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="flex space-x-4 justify-between w-full mb-8">
                 {recipe.prepTimeMinutes && recipe.prepTimeMinutes > 0 && (
-                    <Card>
+                    <Card className="w-full">
                         <CardContent className="flex items-center gap-3 pt-6">
                             <Clock className="w-5 h-5 text-muted-foreground" />
                             <div>
@@ -76,7 +76,7 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                 )}
 
                 {recipe.cookTimeMinutes && recipe.cookTimeMinutes > 0 && (
-                    <Card>
+                    <Card className="w-full">
                         <CardContent className="flex items-center gap-3 pt-6">
                             <UtensilsCrossed className="w-5 h-5 text-muted-foreground" />
                             <div>
@@ -88,7 +88,7 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                 )}
 
                 {recipe.servings && (
-                    <Card>
+                    <Card className="w-full">
                         <CardContent className="flex items-center gap-3 pt-6">
                             <Users className="w-5 h-5 text-muted-foreground" />
                             <div>
@@ -101,9 +101,9 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
             </div>
 
             {showMacros && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="flex space-x-4 justify-between w-full mb-8">
                     {recipe.calories && (
-                        <Card>
+                        <Card className="w-full">
                             <CardContent className="flex items-center gap-3 pt-6">
                                 <FlameIcon className="w-5 h-5 text-muted-foreground" />
                                 <div>
@@ -114,7 +114,7 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                         </Card>
                     )}
                     {recipe.proteinGrams && (
-                        <Card>
+                        <Card className="w-full">
                             <CardContent className="flex items-center gap-3 pt-6">
                                 <BeefIcon className="w-5 h-5 text-muted-foreground" />
                                 <div>
@@ -125,7 +125,7 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                         </Card>
                     )}
                     {recipe.carbsGrams && (
-                        <Card>
+                        <Card className="w-full">
                             <CardContent className="flex items-center gap-3 pt-6">
                                 <AppleIcon className="w-5 h-5 text-muted-foreground" />
                                 <div>
@@ -136,7 +136,7 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                         </Card>
                     )}
                     {recipe.fatGrams && (
-                        <Card>
+                        <Card className="w-full">
                             <CardContent className="flex items-center gap-3 pt-6">
                                 <DessertIcon className="w-5 h-5 text-muted-foreground" />
                                 <div>
