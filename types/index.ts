@@ -25,6 +25,8 @@ export interface RecipeData {
     carbsGrams?: number | null;
     components: RecipeComponent[];
     created_at?: string | null;
+    tags?: Tag[] | null;
+    import_url?: string | null;
 }
 
 export interface DatabaseRecipe {
@@ -45,4 +47,15 @@ export interface DatabaseRecipe {
         component_instructions: { id: string; instruction: string }[];
     }[];
     created_at?: string | null;
+    recipes_tags?: {
+        recipe_id: string;
+        tag_id: string;
+        tag: Tag;
+    }[];
+    import_url?: string | null;
+}
+
+export interface Tag {
+    id: string;
+    name: string;
 }

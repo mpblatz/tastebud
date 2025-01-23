@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RecipeData } from "@/types";
+import { RecipeData, DatabaseRecipe } from "@/types";
 
 export default function NewRecipePage() {
     const supabase = createClientComponentClient();
@@ -16,8 +16,7 @@ export default function NewRecipePage() {
     const [importUrl, setImportUrl] = useState("");
     const [importText, setImportText] = useState("");
     const [isImporting, setIsImporting] = useState(false);
-    const [importedRecipe, setImportedRecipe] = useState(null);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [importedRecipe, setImportedRecipe] = useState<DatabaseRecipe | null>(null);
 
     const handleUrlImport = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,19 +35,18 @@ export default function NewRecipePage() {
                 throw new Error("Failed to import recipe");
             }
 
-            const data = await response.json();
-            console.log("DATA: ", data);
+            const data: DatabaseRecipe = await response.json();
+            console.log("Initial recipe data from API:", data);
 
-            if (data.image_url) {
+            // Handle image upload if present
+            if (data.main_image_url) {
                 try {
-                    // Fetch the image from the external URL
-                    const imageResponse = await fetch(data.image_url);
+                    console.log("Attempting to upload image from URL:", data.main_image_url);
+                    const imageResponse = await fetch(data.main_image_url);
                     const blob = await imageResponse.blob();
-
-                    // Create a temporary file name
                     const fileName = `temp-${Date.now()}.${blob.type.split("/")[1]}`;
 
-                    // Upload to Supabase storage
+                    console.log("Uploading image to Supabase storage...");
                     const { data: uploadData, error: uploadError } = await supabase.storage
                         .from("recipe-images")
                         .upload(fileName, blob);
@@ -57,23 +55,29 @@ export default function NewRecipePage() {
                         throw uploadError;
                     }
 
-                    // Get the public URL
                     const {
                         data: { publicUrl },
                     } = supabase.storage.from("recipe-images").getPublicUrl(fileName);
 
-                    setImageUrl(publicUrl);
+                    console.log("Image uploaded successfully, public URL:", publicUrl);
+
+                    // Create new recipe object with the uploaded image URL
+                    const recipeWithImage: DatabaseRecipe = {
+                        ...data,
+                        main_image_url: publicUrl,
+                    };
+
+                    console.log("Setting imported recipe with new image:", recipeWithImage);
+                    setImportedRecipe(recipeWithImage);
                 } catch (imageError) {
-                    console.error("Error handling image:", imageError);
+                    console.error("Error handling image upload:", imageError);
+                    setImportedRecipe(data);
                 }
+            } else {
+                console.log("No image URL in recipe data, setting recipe as-is");
+                setImportedRecipe(data);
             }
 
-            const transformedRecipe = {
-                ...data,
-                main_image_url: imageUrl,
-            };
-
-            setImportedRecipe(transformedRecipe);
             setShowUrlDialog(false);
         } catch (error) {
             console.error("Error importing recipe:", error);

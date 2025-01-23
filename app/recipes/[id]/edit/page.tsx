@@ -17,6 +17,10 @@ export default async function EditRecipePage(props: { params: Promise<{ id: stri
                 *,
                 component_ingredients (*),
                 component_instructions (*)
+            ),
+            recipes_tags (
+                *,
+                tag: tags (*)
             )`
         )
         .eq("id", id)
@@ -50,6 +54,12 @@ export default async function EditRecipePage(props: { params: Promise<{ id: stri
                 instruction: i.instruction,
             })),
         })),
+        recipes_tags:
+            recipe.recipes_tags?.map((rt) => ({
+                recipe_id: rt.recipe_id,
+                tag_id: rt.tag_id!,
+                tag: rt.tag!,
+            })) || [],
     };
 
     async function handleDelete() {

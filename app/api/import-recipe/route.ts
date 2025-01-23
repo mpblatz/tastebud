@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
             protein_grams: scrapedRecipe.protein,
             carbs_grams: scrapedRecipe.carbs,
             fat_grams: scrapedRecipe.fat,
+            main_image_url: scrapedRecipe.image_url,
+            import_url: url,
             recipe_components: [
                 {
                     id: crypto.randomUUID(),

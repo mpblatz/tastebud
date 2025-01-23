@@ -8,11 +8,15 @@ import {
     DessertIcon,
     EggFriedIcon,
     FlameIcon,
+    LinkIcon,
     Users,
     UtensilsCrossed,
     UtensilsCrossedIcon,
 } from "lucide-react";
 import { RecipeData } from "@/types";
+import { Badge } from "../ui/badge";
+import Link from "next/link";
+import { trimUrl } from "@/lib/recipe-scraper/utils";
 
 function formatTime(minutes: number | null | undefined): string {
     if (!minutes) return "";
@@ -36,6 +40,23 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
 
     return (
         <div className="space-y-8">
+            {recipe.import_url && (
+                <Link href={recipe.import_url} target="_blank">
+                    <Badge className="gap-2 p-[0.5">
+                        <LinkIcon size={12} />
+                        {trimUrl(recipe.import_url)}
+                    </Badge>
+                </Link>
+            )}
+            {recipe.tags && recipe.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                    {recipe.tags.map((tag) => (
+                        <Badge variant="outline" key={tag.id}>
+                            {tag.name}
+                        </Badge>
+                    ))}
+                </div>
+            )}
             {recipe.mainImageUrl && (
                 <div className="w-full h-96 relative overflow-hidden rounded-lg">
                     <img src={recipe.mainImageUrl} alt={recipe.title} className="w-full h-full object-cover" />
@@ -80,51 +101,52 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
             </div>
 
             {showMacros && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Nutrition Facts (per serving)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-4 gap-4">
-                            {recipe.calories && (
-                                <div className="flex items-center gap-3">
-                                    <FlameIcon className="w-5 h-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Calories</p>
-                                        <p className="font-medium">{recipe.calories}</p>
-                                    </div>
+                <div className="grid grid-cols-4 gap-4">
+                    {recipe.calories && (
+                        <Card>
+                            <CardContent className="flex items-center gap-3 pt-6">
+                                <FlameIcon className="w-5 h-5 text-muted-foreground" />
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Calories</p>
+                                    <p className="font-medium">{recipe.calories}</p>
                                 </div>
-                            )}
-                            {recipe.proteinGrams && (
-                                <div className="flex items-center gap-3">
-                                    <BeefIcon className="w-5 h-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Protein</p>
-                                        <p className="font-medium">{recipe.proteinGrams}g</p>
-                                    </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {recipe.proteinGrams && (
+                        <Card>
+                            <CardContent className="flex items-center gap-3 pt-6">
+                                <BeefIcon className="w-5 h-5 text-muted-foreground" />
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Protein</p>
+                                    <p className="font-medium">{recipe.proteinGrams}g</p>
                                 </div>
-                            )}
-                            {recipe.carbsGrams && (
-                                <div className="flex items-center gap-3">
-                                    <AppleIcon className="w-5 h-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Carbs</p>
-                                        <p className="font-medium">{recipe.carbsGrams}g</p>
-                                    </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {recipe.carbsGrams && (
+                        <Card>
+                            <CardContent className="flex items-center gap-3 pt-6">
+                                <AppleIcon className="w-5 h-5 text-muted-foreground" />
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Carbs</p>
+                                    <p className="font-medium">{recipe.carbsGrams}g</p>
                                 </div>
-                            )}
-                            {recipe.fatGrams && (
-                                <div className="flex items-center gap-3">
-                                    <DessertIcon className="w-5 h-5 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Fat</p>
-                                        <p className="font-medium">{recipe.fatGrams}g</p>
-                                    </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                    {recipe.fatGrams && (
+                        <Card>
+                            <CardContent className="flex items-center gap-3 pt-6">
+                                <DessertIcon className="w-5 h-5 text-muted-foreground" />
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Fat</p>
+                                    <p className="font-medium">{recipe.fatGrams}g</p>
                                 </div>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
             )}
 
             <div className="space-y-8">

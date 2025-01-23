@@ -1,5 +1,42 @@
 import { scoreIngredient, scoreInstruction } from ".";
 
+export function trimUrl(url: string): string {
+    try {
+        // Remove leading/trailing whitespace
+        let trimmed = url.trim();
+
+        // Add protocol if missing to make URL parsing work
+        if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+            trimmed = "https://" + trimmed;
+        }
+
+        // Parse the URL
+        const urlObject = new URL(trimmed);
+        const hostname = urlObject.hostname;
+
+        // Remove 'www.' if present
+        let domain = hostname.startsWith("www.") ? hostname.slice(4) : hostname;
+
+        // Handle special cases for country-specific TLDs (e.g., co.uk, com.au)
+        const parts = domain.split(".");
+        if (parts.length > 2) {
+            const tld = parts.slice(-2).join(".");
+            if (tld.match(/^(co|com|org|net|gov|edu)\.[a-z]{2}$/)) {
+                // For domains like example.co.uk
+                return parts.slice(-3).join(".");
+            }
+            // For other cases, return just the main domain and TLD
+            return parts.slice(-2).join(".");
+        }
+
+        return domain;
+    } catch (error) {
+        // Return original URL if parsing fails
+        console.warn(`Failed to parse URL: ${url}`, error);
+        return url;
+    }
+}
+
 export function parseTime(timeString: string | undefined): number | undefined {
     if (!timeString) return undefined;
 

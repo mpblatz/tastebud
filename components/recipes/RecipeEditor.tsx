@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { DatabaseRecipe, RecipeData } from "@/types";
 import RecipeImageUpload from "./RecipeImageUpload";
+import RecipeTagsInput from "./RecipeTagsInput";
 
 interface RecipeEditorProps {
     existingRecipe?: DatabaseRecipe | null;
@@ -43,6 +44,7 @@ export function RecipeEditor({
         if (existingRecipe) {
             const transformedRecipe = transformDatabaseRecipe(existingRecipe);
             setRecipe(transformedRecipe);
+            setMainImageUrl(existingRecipe.main_image_url || null);
         }
     }, [existingRecipe]);
 
@@ -51,6 +53,7 @@ export function RecipeEditor({
             return {
                 title: "",
                 mainImageUrl: null,
+                tags: [],
                 components: [
                     {
                         id: "1",
@@ -67,6 +70,7 @@ export function RecipeEditor({
             prepTimeMinutes: dbRecipe.prep_time_minutes || undefined,
             cookTimeMinutes: dbRecipe.cook_time_minutes || undefined,
             servings: dbRecipe.servings || undefined,
+            tags: dbRecipe.recipes_tags?.map((rt) => rt.tag) || [],
             mainImageUrl: dbRecipe.main_image_url || null,
             calories: dbRecipe.calories || undefined,
             fatGrams: dbRecipe.fat_grams || undefined,
@@ -79,6 +83,7 @@ export function RecipeEditor({
                 instructions: component.component_instructions.map((i) => i.instruction),
                 orderIndex: index,
             })),
+            import_url: dbRecipe.import_url,
         };
     };
 
@@ -96,6 +101,7 @@ export function RecipeEditor({
                           orderIndex: 0,
                       },
                   ],
+                  tags: [],
               }
     );
 
@@ -244,10 +250,31 @@ export function RecipeEditor({
                         protein_grams: recipe.proteinGrams,
                         carbs_grams: recipe.carbsGrams,
                         fat_grams: recipe.fatGrams,
+                        import_url: recipe.import_url,
                     })
                     .eq("id", recipeId);
 
                 if (recipeError) throw recipeError;
+
+                // If we're updating an existing recipe, first delete all existing tag relationships
+                const { error: deleteTagsError } = await supabase
+                    .from("recipes_tags")
+                    .delete()
+                    .eq("recipe_id", recipeId);
+
+                if (deleteTagsError) throw deleteTagsError;
+
+                // Insert new tags if there are any
+                if (recipe.tags && recipe.tags.length > 0) {
+                    const tagInserts = recipe.tags.map((tag) => ({
+                        recipe_id: recipeId,
+                        tag_id: tag.id,
+                    }));
+
+                    const { error: tagsError } = await supabase.from("recipes_tags").insert(tagInserts);
+
+                    if (tagsError) throw tagsError;
+                }
 
                 // Insert new components
                 for (const component of recipe.components) {
@@ -316,6 +343,7 @@ export function RecipeEditor({
                         carbs_grams: recipe.carbsGrams,
                         fat_grams: recipe.fatGrams,
                         user_id: user.id,
+                        import_url: recipe.import_url,
                     })
                     .select()
                     .single();
@@ -372,6 +400,18 @@ export function RecipeEditor({
 
                             if (instructionsError) throw instructionsError;
                         }
+                    }
+
+                    // For new recipes
+                    if (recipe.tags && recipe.tags.length > 0) {
+                        const tagInserts = recipe.tags.map((tag) => ({
+                            recipe_id: newRecipe.id, // Use the newly created recipe's ID
+                            tag_id: tag.id,
+                        }));
+
+                        const { error: tagsError } = await supabase.from("recipes_tags").insert(tagInserts);
+
+                        if (tagsError) throw tagsError;
                     }
                 }
             }
@@ -638,6 +678,19 @@ export function RecipeEditor({
                                     />
                                 </div>
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Tags</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <RecipeTagsInput
+                                existingTags={recipe.tags ?? []}
+                                onTagsChange={(tags) => setRecipe((prev) => ({ ...prev, tags }))}
+                                disabled={isPreview}
+                            />
                         </CardContent>
                     </Card>
 
