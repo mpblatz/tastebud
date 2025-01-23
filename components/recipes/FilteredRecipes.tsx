@@ -70,7 +70,6 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
             </div>
             {allTags && allTags.length > 0 && (
                 <div className="mb-6">
-                    <div className="text-sm text-muted-foreground mb-2">Filter by tags:</div>
                     <div className="flex flex-wrap gap-2">
                         {allTags.map((tag) => (
                             <Button
