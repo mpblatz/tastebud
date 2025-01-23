@@ -46,8 +46,11 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-4 space-x-4">
+            <div className="flex mb-4 items-center space-x-2">
                 <h1 className="text-3xl font-bold whitespace-nowrap">My Recipes</h1>
+                <p className="text-xl">({filteredRecipes.length} recipes)</p>
+            </div>
+            <div className="flex justify-between items-center mb-4 space-x-4">
                 <div className="relative w-full">
                     <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -65,7 +68,6 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
                     </Link>
                 </Button>
             </div>
-
             {allTags && allTags.length > 0 && (
                 <div className="mb-6">
                     <div className="text-sm text-muted-foreground mb-2">Filter by tags:</div>
@@ -85,7 +87,6 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
                     </div>
                 </div>
             )}
-
             {filteredRecipes.length === 0 ? (
                 <div className="text-center py-20 space-y-2">
                     <p>No recipes found matching your criteria.</p>
