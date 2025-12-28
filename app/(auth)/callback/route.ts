@@ -55,7 +55,7 @@ export async function GET(request: Request) {
         }
 
         // Redirect based on username existence
-        // @ts-expect-error
+        // @ts-expect-error - will fix later
         const redirectUrl = !profile?.username
             ? new URL("/username", requestUrl.origin)
             : new URL("/recipes", requestUrl.origin);
