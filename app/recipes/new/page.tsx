@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RecipeData, DatabaseRecipe } from "@/types";
+import { DatabaseRecipe } from "@/types";
 
 export default function NewRecipePage() {
     const supabase = createClientComponentClient();
@@ -47,9 +47,7 @@ export default function NewRecipePage() {
                     const fileName = `temp-${Date.now()}.${blob.type.split("/")[1]}`;
 
                     console.log("Uploading image to Supabase storage...");
-                    const { data: uploadData, error: uploadError } = await supabase.storage
-                        .from("recipe-images")
-                        .upload(fileName, blob);
+                    const { error: uploadError } = await supabase.storage.from("recipe-images").upload(fileName, blob);
 
                     if (uploadError) {
                         throw uploadError;
@@ -115,7 +113,7 @@ export default function NewRecipePage() {
         }
     };
 
-    const handleSave = async (recipeData: RecipeData) => {
+    const handleSave = async () => {
         // ... existing save logic ...
     };
 

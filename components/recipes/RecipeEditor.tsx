@@ -170,7 +170,7 @@ export function RecipeEditor({
                 }
 
                 // Verify deletion
-                const { data: afterDelete, error: verifyError } = await supabase
+                const { data: afterDelete } = await supabase
                     .from("recipe_components")
                     .select(
                         `

@@ -16,7 +16,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 
-export function Navbar({ user, username }: { user: User; username?: string }) {
+export function Navbar({ username }: { user: User; username?: string }) {
     const supabase = createClientComponentClient();
     const { theme, setTheme } = useTheme();
 

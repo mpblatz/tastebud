@@ -1,18 +1,7 @@
 // components/RecipeView.tsx
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    AppleIcon,
-    BeefIcon,
-    Clock,
-    DessertIcon,
-    EggFriedIcon,
-    FlameIcon,
-    LinkIcon,
-    Users,
-    UtensilsCrossed,
-    UtensilsCrossedIcon,
-} from "lucide-react";
+import { AppleIcon, BeefIcon, Clock, DessertIcon, FlameIcon, LinkIcon, Users, UtensilsCrossed } from "lucide-react";
 import { RecipeData } from "@/types";
 import { Badge } from "../ui/badge";
 import Link from "next/link";

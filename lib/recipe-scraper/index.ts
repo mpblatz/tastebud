@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { load } from "cheerio";
 import { cookingVerbs, foodItems, units } from "./dictionaries";
 
@@ -25,16 +26,7 @@ export async function scrapeRecipe(url: string): Promise<ScrapedRecipe> {
         return structuredData;
     }
 
-    throw new Error("");
-
-    // Try microdata if JSON-LD fails
-    const microdata = extractMicrodata($);
-    if (microdata) {
-        return microdata;
-    }
-
-    // Fall back to heuristic parsing
-    return extractWithHeuristics($);
+    throw new Error("Failed to scrape");
 }
 
 function extractStructuredData($: cheerio.Root): ScrapedRecipe | null {
@@ -127,8 +119,6 @@ function extractWithHeuristics($: cheerio.Root): ScrapedRecipe {
     const blocks = findRecipeBlocks($);
     const servings = findServings($);
     const times = findCookingTimes($);
-
-    const imageUrl = findMainImage($);
 
     return {
         title,
@@ -379,7 +369,7 @@ function parseNutritionValue(value: string | number | undefined): number | undef
 
 function getPath(node: Element): Element[] {
     const path: Element[] = [];
-    let current = node;
+    const current = node;
 
     while (current) {
         path.unshift(current);

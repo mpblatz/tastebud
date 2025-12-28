@@ -15,7 +15,7 @@ export function trimUrl(url: string): string {
         const hostname = urlObject.hostname;
 
         // Remove 'www.' if present
-        let domain = hostname.startsWith("www.") ? hostname.slice(4) : hostname;
+        const domain = hostname.startsWith("www.") ? hostname.slice(4) : hostname;
 
         // Handle special cases for country-specific TLDs (e.g., co.uk, com.au)
         const parts = domain.split(".");

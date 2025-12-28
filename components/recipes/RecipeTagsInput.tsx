@@ -149,7 +149,9 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
                                 </div>
                             ))
                         ) : (
-                            <div className="px-4 py-2 text-gray-500">Press Enter to create "{searchText}"</div>
+                            <div className="px-4 py-2 text-gray-500">
+                                Press Enter to create &quot;{searchText}&quot;
+                            </div>
                         )}
                     </div>
                 )}

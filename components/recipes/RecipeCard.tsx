@@ -6,10 +6,6 @@ import { Badge } from "../ui/badge";
 import { trimUrl } from "@/lib/recipe-scraper/utils";
 
 export function RecipeCard({ recipe }: { recipe: DatabaseRecipe }) {
-    const handleSourceClick = (e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent the parent Link from being triggered
-    };
-
     return (
         <Link href={`/recipes/${recipe.id}`}>
             <Card className="hover:shadow-lg transition-shadow overflow-hidden">

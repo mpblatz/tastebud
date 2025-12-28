@@ -70,9 +70,7 @@ const RecipeImageUpload = ({
             const fileName = `${recipeId}-${Date.now()}.${fileExt}`;
 
             // Upload new image
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from(bucketName)
-                .upload(fileName, file);
+            const { error: uploadError } = await supabase.storage.from(bucketName).upload(fileName, file);
 
             clearInterval(progressInterval);
 
