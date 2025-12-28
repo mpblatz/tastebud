@@ -55,6 +55,7 @@ export async function GET(request: Request) {
         }
 
         // Redirect based on username existence
+        // @ts-ignore
         const redirectUrl = !profile?.username
             ? new URL("/username", requestUrl.origin)
             : new URL("/recipes", requestUrl.origin);
