@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Poppins } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
+import { Profile } from "@/types";
 
 const poppins = Poppins({
     weight: ["400", "500", "600", "700"],
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 
 async function getUserProfile(userId: string) {
     const supabase = await createServerClient();
-    const { data, error } = await supabase.from("profiles").select("username").eq("id", userId).single();
+    const { data, error } = await supabase.from("profiles").select("username").eq("id", userId).single<Profile>();
 
     if (error) {
         console.error("Error fetching user profile:", error);
@@ -55,7 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     forcedTheme={undefined}
                 >
                     <div className="contents">
-                        {session && <Navbar user={session.user} username={userProfile?.username} />}
+                        {session && <Navbar user={session.user} username={userProfile?.username ?? "user"} />}
                         <main className="container mx-auto px-4 py-8 w-[800px]">{children}</main>
                     </div>
                 </ThemeProvider>

@@ -1,3 +1,8 @@
+export interface Profile {
+    id: string;
+    username: string;
+}
+
 export interface RecipeComponent {
     id: string;
     name: string;

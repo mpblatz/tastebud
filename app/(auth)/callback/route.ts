@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/supabase";
 import { createServerClient } from "@/lib/supabase/server";
+import { Profile } from "@/types";
 
 export async function GET(request: Request) {
     try {
@@ -47,7 +48,7 @@ export async function GET(request: Request) {
             .from("profiles")
             .select("username")
             .eq("id", user.id)
-            .single();
+            .single<Profile>();
 
         if (profileError && profileError.code !== "PGRST116") {
             console.error("Profile error:", profileError);
@@ -55,10 +56,9 @@ export async function GET(request: Request) {
         }
 
         // Redirect based on username existence
-        // @ts-expect-error - will fix later
-        const redirectUrl = !profile?.username
-            ? new URL("/username", requestUrl.origin)
-            : new URL("/recipes", requestUrl.origin);
+        const redirectUrl = profile?.username
+            ? new URL("/recipes", requestUrl.origin)
+            : new URL("/username", requestUrl.origin);
 
         return NextResponse.redirect(redirectUrl);
     } catch (error) {

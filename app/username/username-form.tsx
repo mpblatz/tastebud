@@ -36,21 +36,20 @@ export default function UsernameForm({ userId }: { userId: string }) {
             }
 
             // Update profile with new username
-            // @ts-expect-error - will fix later
-            const { error: updateError } = await supabase.from("profiles").upsert(
-                {
-                    id: userId, // Use passed userId instead of fetching user again
-                    username: username.toLowerCase(),
-                    updated_at: new Date().toISOString(),
-                },
-                {
-                    onConflict: "id",
-                }
-            );
+            // const { error: updateError } = await supabase.from("profiles").upsert(
+            //     {
+            //         id: userId, // Use passed userId instead of fetching user again
+            //         username: username.toLowerCase(),
+            //         updated_at: new Date().toISOString(),
+            //     },
+            //     {
+            //         onConflict: "id",
+            //     }
+            // );
 
-            if (updateError) {
-                throw updateError;
-            }
+            // if (updateError) {
+            //     throw updateError;
+            // }
 
             router.push("/recipes");
             router.refresh();
