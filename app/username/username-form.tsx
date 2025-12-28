@@ -36,7 +36,7 @@ export default function UsernameForm({ userId }: { userId: string }) {
             }
 
             // Update profile with new username
-            // @ts-ignore
+            // @ts-expect-error
             const { error: updateError } = await supabase.from("profiles").upsert(
                 {
                     id: userId, // Use passed userId instead of fetching user again
