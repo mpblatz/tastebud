@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Laptop } from "lucide-react";
 import {
@@ -15,9 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
+import { createClient } from "@/lib/supabase/client";
 
 export function Navbar({ username }: { user: User; username?: string }) {
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const { theme, setTheme } = useTheme();
 
     const handleSignOut = async () => {

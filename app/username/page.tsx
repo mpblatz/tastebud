@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
-import type { Database } from "@/types/supabase";
 import UsernameForm from "./username-form";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createServerClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
 
 export default async function UsernamePage() {
     try {
         // Create server component client
-        const supabase = createServerComponentClient<Database>({ cookies });
+        const supabase = await createServerClient();
 
         const {
             data: { user },

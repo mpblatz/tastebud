@@ -1,5 +1,6 @@
 // components/RecipeView.tsx
 import React from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppleIcon, BeefIcon, Clock, DessertIcon, FlameIcon, LinkIcon, Users, UtensilsCrossed } from "lucide-react";
 import { RecipeData } from "@/types";
@@ -47,8 +48,15 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
                 </div>
             )}
             {recipe.mainImageUrl && (
-                <div className="w-full h-96 relative overflow-hidden rounded-lg">
-                    <img src={recipe.mainImageUrl} alt={recipe.title} className="w-full h-full object-cover" />
+                <div className="relative w-full h-96 overflow-hidden rounded-lg">
+                    <Image
+                        src={recipe.mainImageUrl}
+                        alt={recipe.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                        priority
+                    />
                 </div>
             )}
             <div className="flex space-x-4 justify-between w-full mb-8">

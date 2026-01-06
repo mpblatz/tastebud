@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { RecipeEditor } from "@/components/recipes/RecipeEditor";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DatabaseRecipe } from "@/types";
+import { createClient } from "@/lib/supabase/client";
 
 export default function NewRecipePage() {
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const [showUrlDialog, setShowUrlDialog] = useState(false);
     const [showTextDialog, setShowTextDialog] = useState(false);
     const [importUrl, setImportUrl] = useState("");

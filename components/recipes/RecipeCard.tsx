@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Clock, ChefHat, UtensilsCrossed, LinkIcon } from "lucide-react";
 import { DatabaseRecipe } from "@/types";
@@ -52,12 +53,14 @@ export function RecipeCard({ recipe }: { recipe: DatabaseRecipe }) {
                         </CardContent>
                         <CardFooter></CardFooter>
                     </div>
-                    <div className="w-[400px] h-[220px] bg-slate-200 flex items-center justify-center border-l overflow-hidden">
+                    <div className="relative w-[400px] h-[220px] bg-slate-200 flex items-center justify-center border-l overflow-hidden">
                         {recipe.main_image_url ? (
-                            <img
+                            <Image
                                 src={recipe.main_image_url}
                                 alt={recipe.title}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
+                                sizes="400px"
                             />
                         ) : (
                             <div className="text-muted-foreground">
