@@ -1,9 +1,6 @@
 "use server";
 
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import type { Database } from "@/types/supabase";
 import { createServerClient } from "@/lib/supabase/server";
 import { Profile } from "@/types";
 
@@ -16,23 +13,17 @@ export async function GET(request: Request) {
             return NextResponse.redirect(new URL("/login", requestUrl.origin));
         }
 
-        // Use RouteHandlerClient for session exchange
-        const routeHandler = createRouteHandlerClient<Database>({
-            cookies: () => cookies(),
-        });
+        const supabase = await createServerClient();
 
         // Exchange the code for a session
-        const { error: sessionError } = await routeHandler.auth.exchangeCodeForSession(code);
+        const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
 
         if (sessionError) {
             console.error("Session error:", sessionError);
             return NextResponse.redirect(new URL("/login", requestUrl.origin));
         }
 
-        // Use ServerClient for data operations
-        const supabase = await createServerClient();
-
-        // Get user after exchanging the code
+        // Get authenticated user
         const {
             data: { user },
             error: userError,
