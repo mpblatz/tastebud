@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import UsernameForm from "./username-form";
 import { createServerClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function UsernamePage() {
     try {
         // Create server component client

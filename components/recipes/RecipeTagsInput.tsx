@@ -18,19 +18,12 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
     const [searchText, setSearchText] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [allTags, setAllTags] = useState<Tag[]>([]);
-    const supabase = createClient();
     const inputRef = useRef<HTMLInputElement>(null);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
-    // Initialize selectedTags from existingTags prop
-    useEffect(() => {
-        if (existingTags) {
-            onTagsChange(existingTags);
-        }
-    }, []); // Run only once on mount
-
     useEffect(() => {
         const fetchTags = async () => {
+            const supabase = createClient();
             const { data, error } = await supabase.from("tags").select("*").order("name");
 
             if (error) {
@@ -42,7 +35,7 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
         };
 
         fetchTags();
-    }, [supabase]);
+    }, []);
 
     useEffect(() => {
         // Handle clicks outside of suggestions box
@@ -89,7 +82,7 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
             } else {
                 // Create new tag
                 console.log("Attempting to create new tag with name:", searchText.trim());
-
+                const supabase = createClient();
                 const { data, error } = await supabase
                     .from("tags")
                     .insert([{ name: searchText.trim() }])
