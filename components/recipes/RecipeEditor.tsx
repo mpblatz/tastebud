@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusCircle, Trash2, Eye, Edit2, TextIcon, LinkIcon, X } from "lucide-react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { RecipeView } from "./RecipeView";
 import { Separator } from "@/components/ui/separator";
@@ -15,6 +14,7 @@ import Link from "next/link";
 import { DatabaseRecipe, RecipeData } from "@/types";
 import RecipeImageUpload from "./RecipeImageUpload";
 import RecipeTagsInput from "./RecipeTagsInput";
+import { createClient } from "@/lib/supabase/client";
 
 interface RecipeEditorProps {
     existingRecipe?: DatabaseRecipe | null;
@@ -34,7 +34,7 @@ export function RecipeEditor({
     onImportText,
 }: RecipeEditorProps) {
     const router = useRouter();
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const [mainImageUrl, setMainImageUrl] = useState<string | null>(existingRecipe?.main_image_url || null);
     const [isPreview, setIsPreview] = useState(false);
     const [isSaving, setIsSaving] = useState(false);

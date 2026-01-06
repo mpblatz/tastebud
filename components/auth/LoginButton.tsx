@@ -1,11 +1,10 @@
 "use client";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/types/supabase";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginButton() {
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
 
     const handleLogin = async () => {
         try {

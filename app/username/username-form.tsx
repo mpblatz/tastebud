@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { Database } from "@/types/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 export default function UsernameForm({ userId }: { userId: string }) {
     const [username, setUsername] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

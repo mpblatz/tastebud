@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { Camera, Upload, Trash2 } from "lucide-react";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -37,8 +38,19 @@ const RecipeImageUpload = ({
     const [error, setError] = useState("");
 
     const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("=== File Upload Started ===");
         const file = event.target.files?.[0];
-        if (!file) return;
+        if (!file) {
+            console.log("No file selected");
+            return;
+        }
+
+        console.log("File selected:", {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            sizeInMB: (file.size / (1024 * 1024)).toFixed(2) + "MB",
+        });
 
         setError("");
         setIsUploading(true);
@@ -46,15 +58,20 @@ const RecipeImageUpload = ({
 
         try {
             // File validation
+            console.log("Validating file type...");
             if (!file.type.startsWith("image/")) {
                 throw new Error("Please select an image file");
             }
+            console.log("✓ File type is valid");
 
+            console.log("Validating file size...");
             if (file.size > 5 * 1024 * 1024) {
                 throw new Error("Image must be less than 5MB");
             }
+            console.log("✓ File size is valid");
 
             // Simulate upload progress
+            console.log("Starting progress interval...");
             const progressInterval = setInterval(() => {
                 setUploadProgress((prev) => {
                     if (prev >= 95) {
@@ -67,63 +84,152 @@ const RecipeImageUpload = ({
 
             // Create unique filename with original extension
             const fileExt = file.name.split(".").pop();
-            const fileName = `${recipeId}-${Date.now()}.${fileExt}`;
+            // Use "temp" prefix for temporary recipes
+            const fileName = `temp-${Date.now()}.${fileExt}`;
+            console.log("Generated filename:", fileName);
+            console.log("Bucket name:", bucketName);
+            console.log("Recipe ID:", recipeId);
 
             // Upload new image
-            const { error: uploadError } = await supabase.storage.from(bucketName).upload(fileName, file);
+            console.log("Uploading to Supabase storage...");
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from(bucketName)
+                .upload(fileName, file);
+
+            console.log("Upload response:", { uploadData, uploadError });
 
             clearInterval(progressInterval);
 
-            if (uploadError) throw uploadError;
+            if (uploadError) {
+                console.error("Upload error:", uploadError);
+                throw uploadError;
+            }
+            console.log("✓ Upload successful");
 
             // Get public URL for the uploaded image
+            console.log("Getting public URL...");
             const {
                 data: { publicUrl },
             } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+            console.log("Public URL:", publicUrl);
 
-            // Update recipe record with new image URL
-            const { error: updateError } = await supabase
-                .from("recipes")
-                .update({ main_image_url: publicUrl })
-                .eq("id", recipeId);
+            // Only update database if we have a real recipe ID (not "temp")
+            if (recipeId !== "temp") {
+                console.log("Updating recipe record in database...");
+                const { data: updateData, error: updateError } = await supabase
+                    .from("recipes")
+                    .update({ main_image_url: publicUrl })
+                    .eq("id", recipeId);
 
-            if (updateError) throw updateError;
+                console.log("Database update response:", { updateData, updateError });
 
-            // Clean up old image if it exists
-            if (currentImageUrl) {
-                const oldFileName = currentImageUrl.split("/").pop();
-                if (oldFileName) {
-                    await supabase.storage.from(bucketName).remove([oldFileName]);
+                if (updateError) {
+                    console.error("Database update error:", updateError);
+                    throw updateError;
                 }
+                console.log("✓ Database updated successfully");
+
+                // Clean up old image if it exists
+                if (currentImageUrl) {
+                    console.log("Cleaning up old image...");
+                    console.log("Old image URL:", currentImageUrl);
+                    const oldFileName = currentImageUrl.split("/").pop();
+                    console.log("Old filename extracted:", oldFileName);
+
+                    if (oldFileName) {
+                        const { data: deleteData, error: deleteError } = await supabase.storage
+                            .from(bucketName)
+                            .remove([oldFileName]);
+                        console.log("Delete old image response:", { deleteData, deleteError });
+
+                        if (deleteError) {
+                            console.warn("Failed to delete old image (non-fatal):", deleteError);
+                        } else {
+                            console.log("✓ Old image deleted");
+                        }
+                    }
+                }
+            } else {
+                console.log("⚠ Recipe ID is 'temp', skipping database update");
             }
 
             setUploadProgress(100);
+            console.log("Calling onImageUpdate with:", publicUrl);
             onImageUpdate(publicUrl);
+            console.log("=== Upload Complete ===");
         } catch (err) {
+            console.error("=== Upload Failed ===");
+            console.error("Error details:", err);
+
+            if (err instanceof Error) {
+                console.error("Error message:", err.message);
+            }
+
             setError(err instanceof Error ? err.message : "An error occurred during upload");
         } finally {
+            console.log("Cleaning up...");
             setIsUploading(false);
+            console.log("=== Upload Process Ended ===");
         }
     };
 
     const handleDelete = async () => {
+        console.log("=== Image Delete Started ===");
+        console.log("Recipe ID:", recipeId);
+        console.log("Current image URL:", currentImageUrl);
+
         try {
             if (currentImageUrl) {
                 const fileName = currentImageUrl.split("/").pop();
+                console.log("Extracted filename:", fileName);
+
                 if (fileName) {
-                    await supabase.storage.from(bucketName).remove([fileName]);
+                    console.log("Deleting from storage...");
+                    const { data: deleteData, error: deleteError } = await supabase.storage
+                        .from(bucketName)
+                        .remove([fileName]);
+
+                    console.log("Storage delete response:", { deleteData, deleteError });
+
+                    if (deleteError) {
+                        console.error("Storage delete error:", deleteError);
+                        throw deleteError;
+                    }
+                    console.log("✓ Image deleted from storage");
                 }
 
-                const { error: updateError } = await supabase
-                    .from("recipes")
-                    .update({ main_image_url: null })
-                    .eq("id", recipeId);
+                // Only update database if we have a real recipe ID (not "temp")
+                if (recipeId !== "temp") {
+                    console.log("Updating recipe record in database...");
+                    const { error: updateError } = await supabase
+                        .from("recipes")
+                        .update({ main_image_url: null })
+                        .eq("id", recipeId);
 
-                if (updateError) throw updateError;
+                    console.log("Database update error:", updateError);
+
+                    if (updateError) {
+                        console.error("Database update error:", updateError);
+                        throw updateError;
+                    }
+                    console.log("✓ Database updated successfully");
+                } else {
+                    console.log("⚠ Recipe ID is 'temp', skipping database update");
+                }
 
                 onImageUpdate(null);
+                console.log("=== Image Delete Complete ===");
+            } else {
+                console.log("No image to delete");
             }
         } catch (err) {
+            console.error("=== Image Delete Failed ===");
+            console.error("Error details:", err);
+
+            if (err instanceof Error) {
+                console.error("Error message:", err.message);
+            }
+
             setError(err instanceof Error ? err.message : "An error occurred while deleting");
         }
     };
@@ -136,21 +242,29 @@ const RecipeImageUpload = ({
             </CardHeader>
             <CardContent className="space-y-4">
                 {currentImageUrl ? (
-                    <div className="relative group">
-                        <img src={currentImageUrl} alt="Recipe" className="w-full rounded-lg object-cover h-96" />
+                    <div className="relative group h-96 w-full rounded-lg overflow-hidden">
+                        <Image
+                            src={currentImageUrl}
+                            alt="Recipe"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 800px"
+                        />
                         <div
                             className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 
                          group-hover:opacity-100 transition-opacity"
                         >
-                            <label>
+                            <label className="cursor-pointer">
                                 <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
-                                <Button variant="secondary" size="icon">
-                                    <Camera className="w-4 h-4" />
+                                <Button variant="secondary" size="icon" type="button" asChild>
+                                    <span>
+                                        <Camera className="w-4 h-4" />
+                                    </span>
                                 </Button>
                             </label>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="destructive" size="icon">
+                                    <Button variant="destructive" size="icon" type="button">
                                         <Trash2 className="w-4 h-4" />
                                     </Button>
                                 </AlertDialogTrigger>

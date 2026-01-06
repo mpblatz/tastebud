@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/lib/supabase/client";
 
 interface Tag {
     id: string;
@@ -18,7 +18,7 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
     const [searchText, setSearchText] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [allTags, setAllTags] = useState<Tag[]>([]);
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
     const inputRef = useRef<HTMLInputElement>(null);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +42,7 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
         };
 
         fetchTags();
-    }, []);
+    }, [supabase]);
 
     useEffect(() => {
         // Handle clicks outside of suggestions box

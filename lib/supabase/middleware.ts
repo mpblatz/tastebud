@@ -1,4 +1,4 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import type { Database } from "@/types/supabase";
@@ -10,14 +10,30 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    const res = NextResponse.next();
-    // Create the middleware client with just the required parameters
-    const supabase = createMiddlewareClient<Database>({
-        req: request,
-        res,
+    const supabaseResponse = NextResponse.next({
+        request,
     });
 
+    const supabase = createServerClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll();
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        request.cookies.set(name, value);
+                        supabaseResponse.cookies.set(name, value, options);
+                    });
+                },
+            },
+        }
+    );
+
     try {
+        // IMPORTANT: This refreshes the session if needed
         const {
             data: { user },
             error,
@@ -28,7 +44,7 @@ export async function middleware(request: NextRequest) {
             if (!user) {
                 return NextResponse.redirect(new URL("/login", request.url));
             }
-            return res;
+            return supabaseResponse;
         }
 
         // Protect all other routes
@@ -36,7 +52,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/login", request.url));
         }
 
-        return res;
+        return supabaseResponse;
     } catch (error) {
         console.error("Middleware error:", error);
         return NextResponse.redirect(new URL("/login", request.url));
@@ -44,5 +60,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+    matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 };
