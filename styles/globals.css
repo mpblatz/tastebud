@@ -2,72 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
     :root {
-        --background: 0 0% 100%;
-        --foreground: 240 10% 3.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 3.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 3.9%;
-        --primary: 240 5.9% 10%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 46.1%;
-        --accent: 240 4.8% 95.9%;
-        --accent-foreground: 240 5.9% 10%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 240 5.9% 90%;
-        --input: 240 5.9% 90%;
-        --ring: 240 5.9% 10%;
-        --radius: 0.5rem;
-        --chart-1: 12 76% 61%;
-        --chart-2: 173 58% 39%;
-        --chart-3: 197 37% 24%;
-        --chart-4: 43 74% 66%;
-        --chart-5: 27 87% 67%;
+        /* RGB-space values for Tailwind opacity modifier support */
+        --bg: 248 248 248;
+        --card-bg: 255 255 255;
+        --text: 26 26 26;
+        --text-muted: 107 114 128;
+        --text-faint: 156 163 175;
+        --text-very-faint: 196 196 196;
+        --accent: 37 99 235;
+        --link-color: 255 95 21;
+        --link-hover: 234 87 19;
+        --destructive: 239 68 68;
+        --image-bg: 232 237 243;
+
+        /* Raw values for borders/shadows (rgba-based, not decomposable) */
+        --border: rgba(0, 0, 0, 0.08);
+        --border-hover: rgba(0, 0, 0, 0.14);
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+        --btn-bg: rgba(0, 0, 0, 0.03);
+        --toggle-bg: rgba(0, 0, 0, 0.04);
+        --toggle-active: #fff;
+        --toggle-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --divider: rgba(0, 0, 0, 0.06);
+        --tag-saturation: 62%;
+        --tag-lightness: 38%;
+        --radius: 14px;
     }
 
     .dark {
-        --background: 240 10% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 240 10% 3.9%;
-        --card-foreground: 0 0% 98%;
-        --popover: 240 10% 3.9%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 240 5.9% 10%;
-        --secondary: 240 3.7% 15.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 240 3.7% 15.9%;
-        --muted-foreground: 240 5% 64.9%;
-        --accent: 240 3.7% 15.9%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 240 3.7% 15.9%;
-        --input: 240 3.7% 15.9%;
-        --ring: 240 4.9% 83.9%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-    }
-}
+        --bg: 9 9 11;
+        --card-bg: 17 17 19;
+        --text: 240 240 240;
+        --text-muted: 154 154 154;
+        --text-faint: 85 85 85;
+        --text-very-faint: 51 51 51;
+        --accent: 96 165 250;
+        --link-color: 255 95 21;
+        --link-hover: 255 122 64;
+        --destructive: 239 68 68;
+        --image-bg: 26 30 36;
 
-@layer base {
+        --border: rgba(255, 255, 255, 0.06);
+        --border-hover: rgba(255, 255, 255, 0.12);
+        --shadow: none;
+        --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.3);
+        --btn-bg: rgba(255, 255, 255, 0.04);
+        --toggle-bg: rgba(255, 255, 255, 0.06);
+        --toggle-active: rgba(255, 255, 255, 0.12);
+        --toggle-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --divider: rgba(255, 255, 255, 0.04);
+        --tag-saturation: 70%;
+        --tag-lightness: 62%;
+    }
+
     * {
         @apply border-border;
     }
+
     body {
         @apply bg-background text-foreground;
+        font-size: 15px;
+        line-height: 1.65;
+        transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-space-mono), monospace;
+    }
+
+    h1 {
+        font-size: 28px;
+        letter-spacing: -0.03em;
+    }
+
+    h2 {
+        font-size: 22px;
+        letter-spacing: -0.02em;
+    }
+
+    h3 {
+        font-size: 16px;
+        letter-spacing: -0.02em;
+    }
+
+    /* Interactive elements */
+    button, [role="button"] {
+        transition: all 0.2s ease;
+    }
+
+    /* Only style inline prose links, not nav/button links */
+    .prose a, p a, li a {
+        color: rgb(var(--link-color));
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: color 0.2s ease;
+    }
+
+    .prose a:hover, p a:hover, li a:hover {
+        color: rgb(var(--link-hover));
+    }
+
+    @media (max-width: 768px) {
+        h1 { font-size: 22px; }
+        h2 { font-size: 20px; }
+        h3 { font-size: 15px; }
     }
 }

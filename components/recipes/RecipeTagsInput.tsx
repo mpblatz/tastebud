@@ -129,20 +129,20 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
                 {showSuggestions && searchText && (
                     <div
                         ref={suggestionsRef}
-                        className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-auto"
+                        className="absolute z-10 w-full mt-1 bg-card border border-[var(--border)] rounded-md shadow-card-hover max-h-48 overflow-auto"
                     >
                         {filteredTags.length > 0 ? (
                             filteredTags.map((tag) => (
                                 <div
                                     key={tag.id}
-                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    className="px-4 py-2 hover:bg-[var(--btn-bg)] cursor-pointer font-mono text-[12px] tracking-[0.02em]"
                                     onClick={() => handleTagSelect(tag)}
                                 >
                                     {tag.name}
                                 </div>
                             ))
                         ) : (
-                            <div className="px-4 py-2 text-gray-500">
+                            <div className="px-4 py-2 text-text-faint font-mono text-[12px]">
                                 Press Enter to create &quot;{searchText}&quot;
                             </div>
                         )}

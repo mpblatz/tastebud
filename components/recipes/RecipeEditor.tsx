@@ -454,7 +454,7 @@ export function RecipeEditor({
         <div>
             <div className="space-y-6 mb-8">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-4xl font-bold tracking-tight">{recipeId ? "Edit Recipe" : "New Recipe"}</h1>
+                    <h1 className="font-bold">{recipeId ? "Edit Recipe" : "New Recipe"}</h1>
                     {!recipeId && (onImportUrl || onImportText) && (
                         <div className="flex gap-2">
                             {onImportUrl && (

@@ -14,10 +14,10 @@ export default async function LoginPage() {
 
     return (
         <div className="flex min-h-[80vh] items-center justify-center">
-            <div className="max-w-md space-y-8 px-4 flex flex-col">
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold">tastebud</h1>
-                    <p className="mt-2">Sign in to access your recipes</p>
+            <div className="max-w-md space-y-8 px-4 flex flex-col items-center">
+                <div className="text-center space-y-2">
+                    <h1 className="font-bold">tastebud</h1>
+                    <p className="text-[13px] text-text-muted">Sign in to access your recipes</p>
                 </div>
                 <LoginButton />
             </div>
