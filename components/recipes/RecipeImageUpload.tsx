@@ -287,14 +287,14 @@ const RecipeImageUpload = ({
                 ) : (
                     <label
                         className="flex flex-col items-center justify-center w-full h-96 border-2 
-                         border-dashed rounded-lg cursor-pointer hover:bg-accent"
+                         border-dashed rounded-lg cursor-pointer hover:bg-[var(--btn-bg)]"
                     >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <Upload className="w-8 h-8 mb-3 text-muted-foreground" />
-                            <p className="mb-2 text-sm text-muted-foreground">
+                            <Upload className="w-8 h-8 mb-3 text-text-muted" />
+                            <p className="mb-2 text-sm text-text-muted">
                                 <span className="font-semibold">Click to upload</span> or drag and drop
                             </p>
-                            <p className="text-xs text-muted-foreground">PNG, JPG, GIF up to 5MB</p>
+                            <p className="text-xs text-text-muted">PNG, JPG, GIF up to 5MB</p>
                         </div>
                         <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
                     </label>
@@ -303,7 +303,7 @@ const RecipeImageUpload = ({
                 {isUploading && (
                     <div className="space-y-2">
                         <Progress value={uploadProgress} />
-                        <p className="text-sm text-muted-foreground text-center">Uploading... {uploadProgress}%</p>
+                        <p className="text-sm text-text-muted text-center">Uploading... {uploadProgress}%</p>
                     </div>
                 )}
 

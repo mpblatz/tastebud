@@ -1,10 +1,10 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Edit } from "lucide-react";
+import { Edit, ExternalLink } from "lucide-react";
 import { RecipeView } from "@/components/recipes/RecipeView";
 import { DatabaseRecipe } from "@/types";
+import { trimUrl } from "@/lib/recipe-scraper/utils";
 
 export default async function RecipePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
@@ -88,15 +88,29 @@ export default async function RecipePage(props: { params: Promise<{ id: string }
     });
 
     return (
-        <div className="container mx-auto py-8 max-w-4xl">
-            <div className="flex justify-between items-start mb-6 space-x-4">
-                <h1 className="text-4xl font-bold tracking-tight">{databaseRecipe.title}</h1>
-                <Button asChild variant="outline">
-                    <Link href={`/recipes/${id}/edit`} className="flex items-center gap-2">
-                        <Edit className="w-4 h-4" />
-                        Edit Recipe
-                    </Link>
-                </Button>
+        <div>
+            <div className="flex justify-between items-start mb-8 gap-4">
+                <div className="min-w-0">
+                    <h1 className="font-bold">{databaseRecipe.title}</h1>
+                    {databaseRecipe.import_url && (
+                        <Link
+                            href={databaseRecipe.import_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 mt-1 text-[12px] font-mono text-[rgb(var(--link-color))] underline underline-offset-[3px] decoration-[rgb(var(--link-color))/30] hover:text-[rgb(var(--link-hover))] transition-colors duration-200"
+                        >
+                            {trimUrl(databaseRecipe.import_url)}
+                            <ExternalLink className="w-3 h-3" />
+                        </Link>
+                    )}
+                </div>
+                <Link
+                    href={`/recipes/${id}/edit`}
+                    className="inline-flex items-center gap-2 no-underline shrink-0 font-mono text-[11px] tracking-[0.02em] rounded-md px-4 py-2 text-text-muted border border-[var(--border)] hover:text-foreground hover:border-[var(--border-hover)] transition-all duration-200"
+                >
+                    <Edit className="w-3.5 h-3.5" />
+                    Edit
+                </Link>
             </div>
 
             <RecipeView recipe={transformToRecipeData(databaseRecipe)} />

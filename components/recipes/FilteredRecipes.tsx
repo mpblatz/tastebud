@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, PlusCircle, X } from "lucide-react";
 import Link from "next/link";
 import { RecipeCard } from "@/components/recipes/RecipeCard";
+import { getTagColor } from "@/lib/tag-colors";
 import type { DatabaseRecipe } from "@/types";
 
 interface FilteredRecipesProps {
@@ -16,7 +16,6 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-    // Get unique tags from all recipes
     const allTags = useMemo(() => {
         const tagsSet = new Set<string>();
         initialRecipes.forEach((recipe) => {
@@ -29,7 +28,6 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
         return Array.from(tagsSet).sort();
     }, [initialRecipes]);
 
-    // Filter recipes based on search term and selected tags
     const filteredRecipes = useMemo(() => {
         return initialRecipes.filter((recipe) => {
             const matchesSearch = recipe.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -46,61 +44,82 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
 
     return (
         <div>
-            <div className="flex mb-4 items-center space-x-2">
-                <h1 className="text-3xl font-bold whitespace-nowrap">My Recipes</h1>
-                <p className="text-xl">({filteredRecipes.length} recipes)</p>
+            <div className="flex justify-between items-baseline mb-4">
+                <h1 className="font-bold whitespace-nowrap">My Recipes</h1>
+                <span className="text-[11px] font-mono text-text-faint tracking-[0.03em]">
+                    {filteredRecipes.length} recipes
+                </span>
             </div>
             <div className="flex justify-between items-center mb-4 space-x-4">
                 <div className="relative w-full">
-                    <SearchIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-text-faint" />
                     <Input
                         type="text"
                         placeholder="Search recipes..."
-                        className="w-full pl-8 pr-4"
+                        className="w-full pl-9 pr-4"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Button asChild>
-                    <Link href="/recipes/new" className="flex items-center gap-2">
-                        <PlusCircle className="w-4 h-4" />
-                        New Recipe
-                    </Link>
-                </Button>
+                <Link
+                    href="/recipes/new"
+                    className="inline-flex items-center gap-2 no-underline font-mono text-[11px] tracking-[0.02em] whitespace-nowrap rounded-md px-4 py-2 bg-[var(--btn-bg)] text-text-muted border border-[var(--border)] hover:text-foreground hover:border-[var(--border-hover)] transition-all duration-200"
+                >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    New Recipe
+                </Link>
             </div>
             {allTags && allTags.length > 0 && (
-                <div className="mb-6">
+                <div className="mb-8">
+                    <span className="text-[10px] font-mono text-text-faint tracking-[0.05em] uppercase mb-2 block">
+                        Filter by tags
+                    </span>
                     <div className="flex flex-wrap gap-2">
-                        {allTags.map((tag) => (
-                            <Button
-                                key={tag}
-                                variant={selectedTags.includes(tag) ? "secondary" : "outline"}
-                                size="sm"
-                                onClick={() => toggleTag(tag)}
-                                className="flex items-center gap-1"
-                            >
-                                {tag}
-                                {selectedTags.includes(tag) && <X className="h-3 w-3 ml-1" />}
-                            </Button>
-                        ))}
+                        {allTags.map((tag) => {
+                            const isActive = selectedTags.includes(tag);
+                            const color = getTagColor(tag);
+                            return (
+                                <button
+                                    key={tag}
+                                    onClick={() => toggleTag(tag)}
+                                    className="inline-flex items-center gap-1 font-mono text-[11.5px] tracking-[0.02em] rounded-md px-[14px] py-[7px] border transition-all duration-200"
+                                    style={
+                                        isActive
+                                            ? {
+                                                  color,
+                                                  background: `color-mix(in srgb, ${color} 8%, transparent)`,
+                                                  borderColor: `color-mix(in srgb, ${color} 20%, transparent)`,
+                                              }
+                                            : {
+                                                  color: "rgb(var(--text-faint))",
+                                                  background: "transparent",
+                                                  borderColor: "var(--border)",
+                                              }
+                                    }
+                                >
+                                    {tag}
+                                    {isActive && <X className="h-3 w-3 ml-0.5" />}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             )}
             {filteredRecipes.length === 0 ? (
-                <div className="text-center py-20 space-y-2">
-                    <p>No recipes found matching your criteria.</p>
-                    <Button
-                        variant="outline"
+                <div className="text-center py-20 space-y-3">
+                    <p className="text-text-muted text-[13px]">No recipes found matching your criteria.</p>
+                    <button
                         onClick={() => {
                             setSearchTerm("");
                             setSelectedTags([]);
                         }}
+                        className="font-mono text-[11px] tracking-[0.02em] text-text-faint border border-[var(--border)] rounded-md px-4 py-2 hover:text-foreground hover:border-[var(--border-hover)] transition-all duration-200"
                     >
                         Clear Filters
-                    </Button>
+                    </button>
                 </div>
             ) : (
-                <div className="flex flex-col space-y-4">
+                <div className="grid grid-cols-2 max-md:grid-cols-1 gap-4">
                     {filteredRecipes.map((recipe) => (
                         <RecipeCard key={recipe.id} recipe={recipe} />
                     ))}
