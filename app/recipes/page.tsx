@@ -5,6 +5,10 @@ import { DatabaseRecipe } from "@/types";
 export default async function RecipesPage() {
     const supabase = await createServerClient();
 
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+
     const { data: recipes } = await supabase
         .from("recipes")
         .select(
@@ -50,7 +54,7 @@ export default async function RecipesPage() {
 
     return (
         <div className="container mx-auto px-4">
-            <FilteredRecipes initialRecipes={recipeData} />
+            <FilteredRecipes initialRecipes={recipeData} isSignedIn={!!session} />
         </div>
     );
 }

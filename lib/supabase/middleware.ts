@@ -5,7 +5,7 @@ import type { Database } from "@/types/supabase";
 
 export async function middleware(request: NextRequest) {
     // Public paths that don't need authentication
-    const publicPaths = ["/login", "/callback"];
+    const publicPaths = ["/login", "/callback", "/callback/popup", "/recipes"];
     if (publicPaths.includes(request.nextUrl.pathname)) {
         return NextResponse.next();
     }
@@ -42,20 +42,20 @@ export async function middleware(request: NextRequest) {
         // Allow access to username page after authentication
         if (request.nextUrl.pathname === "/username") {
             if (!user) {
-                return NextResponse.redirect(new URL("/login", request.url));
+                return NextResponse.redirect(new URL("/recipes", request.url));
             }
             return supabaseResponse;
         }
 
         // Protect all other routes
         if (!user || error) {
-            return NextResponse.redirect(new URL("/login", request.url));
+            return NextResponse.redirect(new URL("/recipes", request.url));
         }
 
         return supabaseResponse;
     } catch (error) {
         console.error("Middleware error:", error);
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(new URL("/recipes", request.url));
     }
 }
 

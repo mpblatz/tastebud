@@ -8,9 +8,12 @@ export async function GET(request: Request) {
     try {
         const requestUrl = new URL(request.url);
         const code = requestUrl.searchParams.get("code");
+        const isPopup = requestUrl.searchParams.get("popup") === "true";
 
         if (!code) {
-            return NextResponse.redirect(new URL("/login", requestUrl.origin));
+            return isPopup
+                ? NextResponse.redirect(new URL("/callback/popup", requestUrl.origin))
+                : NextResponse.redirect(new URL("/recipes", requestUrl.origin));
         }
 
         const supabase = await createServerClient();
@@ -20,7 +23,14 @@ export async function GET(request: Request) {
 
         if (sessionError) {
             console.error("Session error:", sessionError);
-            return NextResponse.redirect(new URL("/login", requestUrl.origin));
+            return isPopup
+                ? NextResponse.redirect(new URL("/callback/popup", requestUrl.origin))
+                : NextResponse.redirect(new URL("/recipes", requestUrl.origin));
+        }
+
+        // If popup flow, close the popup — session cookies are already set
+        if (isPopup) {
+            return NextResponse.redirect(new URL("/callback/popup", requestUrl.origin));
         }
 
         // Get authenticated user
@@ -31,7 +41,7 @@ export async function GET(request: Request) {
 
         if (userError || !user) {
             console.error("User error:", userError);
-            return NextResponse.redirect(new URL("/login", requestUrl.origin));
+            return NextResponse.redirect(new URL("/recipes", requestUrl.origin));
         }
 
         // Check if user has username
@@ -43,7 +53,7 @@ export async function GET(request: Request) {
 
         if (profileError && profileError.code !== "PGRST116") {
             console.error("Profile error:", profileError);
-            return NextResponse.redirect(new URL("/login", requestUrl.origin));
+            return NextResponse.redirect(new URL("/recipes", requestUrl.origin));
         }
 
         // Redirect based on username existence
@@ -54,6 +64,6 @@ export async function GET(request: Request) {
         return NextResponse.redirect(redirectUrl);
     } catch (error) {
         console.error("Callback error:", error);
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(new URL("/recipes", request.url));
     }
 }

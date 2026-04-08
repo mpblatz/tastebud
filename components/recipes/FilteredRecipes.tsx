@@ -10,9 +10,10 @@ import type { DatabaseRecipe } from "@/types";
 
 interface FilteredRecipesProps {
     initialRecipes: DatabaseRecipe[];
+    isSignedIn: boolean;
 }
 
-export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps) {
+export default function FilteredRecipes({ initialRecipes, isSignedIn }: FilteredRecipesProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -61,13 +62,22 @@ export default function FilteredRecipes({ initialRecipes }: FilteredRecipesProps
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Link
-                    href="/recipes/new"
-                    className="inline-flex items-center gap-2 no-underline font-mono text-[11px] tracking-[0.02em] whitespace-nowrap rounded-md px-4 py-2 bg-[var(--btn-bg)] text-text-muted border border-[var(--border)] hover:text-foreground hover:border-[var(--border-hover)] transition-all duration-200"
-                >
-                    <PlusCircle className="w-3.5 h-3.5" />
-                    New Recipe
-                </Link>
+                {isSignedIn ? (
+                    <Link
+                        href="/recipes/new"
+                        className="inline-flex items-center gap-2 no-underline font-mono text-[11px] tracking-[0.02em] whitespace-nowrap rounded-md px-4 py-2 bg-[var(--btn-bg)] text-text-muted border border-[var(--border)] hover:text-foreground hover:border-[var(--border-hover)] transition-all duration-200"
+                    >
+                        <PlusCircle className="w-3.5 h-3.5" />
+                        New Recipe
+                    </Link>
+                ) : (
+                    <span
+                        className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.02em] whitespace-nowrap rounded-md px-4 py-2 bg-[var(--btn-bg)] text-text-faint border border-[var(--border)] opacity-50 cursor-not-allowed"
+                    >
+                        <PlusCircle className="w-3.5 h-3.5" />
+                        New Recipe
+                    </span>
+                )}
             </div>
             {allTags && allTags.length > 0 && (
                 <div className="mb-8">

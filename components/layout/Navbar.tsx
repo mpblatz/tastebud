@@ -13,18 +13,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import AuthModal from "@/components/auth/AuthModal";
 
-export function Navbar({ username }: { user: User; username?: string }) {
+export function Navbar({ user, username }: { user?: User; username?: string }) {
     const supabase = createClient();
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
+    const [authModalOpen, setAuthModalOpen] = useState(false);
 
     useEffect(() => setMounted(true), []);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        window.location.href = "/login";
+        window.location.href = "/";
     };
 
     const userInitial = username ? username[0].toUpperCase() : "U";
@@ -33,7 +36,10 @@ export function Navbar({ username }: { user: User; username?: string }) {
     return (
         <nav className="border-b border-[var(--divider)]">
             <div className="mx-auto max-w-[1100px] px-8 max-md:px-4 h-16 flex items-center justify-between">
-                <Link href="/recipes" className="font-heading text-xl font-bold tracking-[-0.03em] text-foreground no-underline hover:text-foreground">
+                <Link
+                    href="/recipes"
+                    className="font-heading text-xl font-bold tracking-[-0.03em] text-foreground no-underline hover:text-foreground"
+                >
                     tastebud
                 </Link>
 
@@ -71,22 +77,28 @@ export function Navbar({ username }: { user: User; username?: string }) {
                         </button>
                     </div>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger className="focus:outline-none">
-                            <div className="flex items-center gap-2">
-                                <span className="text-[11px] font-mono text-text-faint tracking-[0.02em]">{username}</span>
-                                <Avatar className="h-7 w-7">
-                                    <AvatarImage src="/avatar.webp" alt={username} />
-                                    <AvatarFallback className="bg-[var(--btn-bg)] text-text-muted font-mono text-[10px] border border-[var(--border)]">{userInitial}</AvatarFallback>
-                                </Avatar>
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
-                            <DropdownMenuItem className="cursor-pointer font-mono text-xs" onClick={handleSignOut}>
-                                Sign out
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="focus:outline-none">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[11px] font-mono text-text-faint tracking-[0.02em]">
+                                        {username}
+                                    </span>
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuItem className="cursor-pointer font-mono text-xs" onClick={handleSignOut}>
+                                    Sign out
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Button size="sm" onClick={() => setAuthModalOpen(true)}>
+                            Sign In
+                        </Button>
+                    )}
+
+                    <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
                 </div>
             </div>
         </nav>

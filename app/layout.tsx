@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: "tastebud",
     description: "Your personal recipe collection",
     icons: {
-        icon: "/avatar.webp",
+        icon: "/mo-1.png",
         apple: "/apple-icon.png",
     },
 };
@@ -57,7 +57,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     }
 
     return (
-        <html lang="en" suppressHydrationWarning className={`${spaceMono.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable}`}>
+        <html
+            lang="en"
+            suppressHydrationWarning
+            className={`${spaceMono.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable}`}
+        >
             <body className="min-h-screen bg-background font-body antialiased">
                 <ThemeProvider
                     attribute="class"
@@ -68,8 +72,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     forcedTheme={undefined}
                 >
                     <div className="contents">
-                        {session && <Navbar user={session.user} username={userProfile?.username ?? "user"} />}
-                        <main className="mx-auto max-w-[1100px] px-8 pt-12 pb-12 max-md:px-4 max-md:pt-8 max-md:pb-8">{children}</main>
+                        <Navbar user={session?.user} username={userProfile?.username ?? "user"} />
+                        <main className="mx-auto max-w-[1100px] px-8 pt-12 pb-12 max-md:px-4 max-md:pt-8 max-md:pb-8">
+                            {children}
+                        </main>
                     </div>
                 </ThemeProvider>
             </body>

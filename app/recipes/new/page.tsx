@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { RecipeEditor } from "@/components/recipes/RecipeEditor";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,18 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function NewRecipePage() {
     const supabase = createClient();
+    const router = useRouter();
     const [showUrlDialog, setShowUrlDialog] = useState(false);
     const [showTextDialog, setShowTextDialog] = useState(false);
     const [importUrl, setImportUrl] = useState("");
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (!session) {
+                router.replace("/recipes");
+            }
+        });
+    }, []);
     const [importText, setImportText] = useState("");
     const [isImporting, setIsImporting] = useState(false);
     const [importedRecipe, setImportedRecipe] = useState<DatabaseRecipe | null>(null);

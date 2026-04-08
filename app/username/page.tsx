@@ -15,7 +15,7 @@ export default async function UsernamePage() {
         } = await supabase.auth.getUser();
 
         if (userError || !user) {
-            redirect("/login");
+            redirect("/recipes");
         }
 
         // Check if username already exists
@@ -27,7 +27,7 @@ export default async function UsernamePage() {
 
         if (profileError && profileError.code !== "PGRST116") {
             console.error("Profile error:", profileError);
-            redirect("/login");
+            redirect("/recipes");
         }
 
         if (profile?.username) {
@@ -37,6 +37,6 @@ export default async function UsernamePage() {
         return <UsernameForm userId={user.id} />;
     } catch (error) {
         console.error("Username page error:", error);
-        redirect("/login");
+        redirect("/recipes");
     }
 }

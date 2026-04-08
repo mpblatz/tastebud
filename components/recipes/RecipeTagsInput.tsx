@@ -52,7 +52,7 @@ const RecipeTagsInput: React.FC<RecipeTagsProps> = ({ existingTags = [], onTagsC
     const filteredTags = allTags.filter(
         (tag) =>
             tag.name.toLowerCase().includes(searchText.toLowerCase()) &&
-            !existingTags.some((selected) => selected.id === tag.id)
+            !existingTags.some((selected) => selected.id === tag.id),
     );
 
     const handleTagSelect = (tag: Tag) => {
