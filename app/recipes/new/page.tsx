@@ -23,7 +23,7 @@ export default function NewRecipePage() {
                 router.replace("/recipes");
             }
         });
-    }, []);
+    }, [supabase.auth, router]);
     const [importText, setImportText] = useState("");
     const [isImporting, setIsImporting] = useState(false);
     const [importedRecipe, setImportedRecipe] = useState<DatabaseRecipe | null>(null);

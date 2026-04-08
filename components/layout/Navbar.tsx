@@ -11,8 +11,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import AuthModal from "@/components/auth/AuthModal";
@@ -30,7 +28,6 @@ export function Navbar({ user, username }: { user?: User; username?: string }) {
         window.location.href = "/";
     };
 
-    const userInitial = username ? username[0].toUpperCase() : "U";
     const isActive = (t: string) => mounted && theme === t;
 
     return (
