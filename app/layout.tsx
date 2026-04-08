@@ -25,7 +25,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "tastebud",
+    title: "Tastebud",
     description: "Your personal recipe collection",
     icons: {
         icon: "/mo-1.png",
