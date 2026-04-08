@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
-import { SearchIcon, PlusCircle, X } from "lucide-react";
+import { SearchIcon, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { RecipeCard } from "@/components/recipes/RecipeCard";
 import { getTagColor } from "@/lib/tag-colors";
@@ -43,14 +43,16 @@ export default function FilteredRecipes({ initialRecipes, isSignedIn }: Filtered
         setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
     };
 
+    const tagCounts = useMemo(() => {
+        const counts: Record<string, number> = {};
+        allTags.forEach((tag) => {
+            counts[tag] = initialRecipes.filter((r) => r.recipes_tags?.some((rt) => rt.tag?.name === tag)).length;
+        });
+        return counts;
+    }, [allTags, initialRecipes]);
+
     return (
         <div>
-            <div className="flex justify-between items-baseline mb-4">
-                <h1 className="font-bold whitespace-nowrap">My Recipes</h1>
-                <span className="text-[11px] font-mono text-text-faint tracking-[0.03em]">
-                    {filteredRecipes.length} recipes
-                </span>
-            </div>
             <div className="flex justify-between items-center mb-4 space-x-4">
                 <div className="relative w-full">
                     <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-text-faint" />
@@ -71,48 +73,66 @@ export default function FilteredRecipes({ initialRecipes, isSignedIn }: Filtered
                         New Recipe
                     </Link>
                 ) : (
-                    <span
-                        className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.02em] whitespace-nowrap rounded-md px-4 py-2 bg-[var(--btn-bg)] text-text-faint border border-[var(--border)] opacity-50 cursor-not-allowed"
-                    >
+                    <span className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.02em] whitespace-nowrap rounded-md px-4 py-2 bg-[var(--btn-bg)] text-text-faint border border-[var(--border)] opacity-50 cursor-not-allowed">
                         <PlusCircle className="w-3.5 h-3.5" />
                         New Recipe
                     </span>
                 )}
             </div>
             {allTags && allTags.length > 0 && (
-                <div className="mb-8">
-                    <span className="text-[10px] font-mono text-text-faint tracking-[0.05em] uppercase mb-2 block">
-                        Filter by tags
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                        {allTags.map((tag) => {
-                            const isActive = selectedTags.includes(tag);
-                            const color = getTagColor(tag);
-                            return (
-                                <button
-                                    key={tag}
-                                    onClick={() => toggleTag(tag)}
-                                    className="inline-flex items-center gap-1 font-mono text-[11.5px] tracking-[0.02em] rounded-md px-[14px] py-[7px] border transition-all duration-200"
-                                    style={
-                                        isActive
-                                            ? {
-                                                  color,
-                                                  background: `color-mix(in srgb, ${color} 8%, transparent)`,
-                                                  borderColor: `color-mix(in srgb, ${color} 20%, transparent)`,
-                                              }
-                                            : {
-                                                  color: "rgb(var(--text-faint))",
-                                                  background: "transparent",
-                                                  borderColor: "var(--border)",
-                                              }
-                                    }
-                                >
-                                    {tag}
-                                    {isActive && <X className="h-3 w-3 ml-0.5" />}
-                                </button>
-                            );
-                        })}
-                    </div>
+                <div className="flex flex-wrap gap-2 items-center mb-4">
+                    <button
+                        onClick={() => setSelectedTags([])}
+                        className="font-mono text-[11.5px] tracking-[0.02em] rounded-md px-[14px] py-[7px] border transition-all duration-200"
+                        style={
+                            selectedTags.length === 0
+                                ? {
+                                      fontWeight: 600,
+                                      color: "rgb(var(--text))",
+                                      background: "var(--btn-bg)",
+                                      borderColor: "var(--border-hover)",
+                                  }
+                                : {
+                                      fontWeight: 400,
+                                      color: "rgb(var(--text-faint))",
+                                      background: "transparent",
+                                      borderColor: "var(--border)",
+                                  }
+                        }
+                    >
+                        All ({initialRecipes.length})
+                    </button>
+
+                    <div style={{ width: "1px", height: "20px", background: "var(--divider)", margin: "0 4px" }} />
+
+                    {allTags.map((tag) => {
+                        const isActive = selectedTags.includes(tag);
+                        const color = getTagColor(tag);
+                        return (
+                            <button
+                                key={tag}
+                                onClick={() => toggleTag(tag)}
+                                className="font-mono text-[11.5px] tracking-[0.02em] rounded-md px-[14px] py-[7px] border transition-all duration-200"
+                                style={
+                                    isActive
+                                        ? {
+                                              fontWeight: 600,
+                                              color,
+                                              background: `color-mix(in srgb, ${color} 8%, transparent)`,
+                                              borderColor: `color-mix(in srgb, ${color} 20%, transparent)`,
+                                          }
+                                        : {
+                                              fontWeight: 400,
+                                              color: "rgb(var(--text-faint))",
+                                              background: "transparent",
+                                              borderColor: "var(--border)",
+                                          }
+                                }
+                            >
+                                {tag} ({tagCounts[tag]})
+                            </button>
+                        );
+                    })}
                 </div>
             )}
             {filteredRecipes.length === 0 ? (

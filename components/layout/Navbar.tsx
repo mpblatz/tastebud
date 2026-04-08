@@ -4,13 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Laptop } from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import AuthModal from "@/components/auth/AuthModal";
@@ -31,13 +25,13 @@ export function Navbar({ user, username }: { user?: User; username?: string }) {
     const isActive = (t: string) => mounted && theme === t;
 
     return (
-        <nav className="border-b border-[var(--divider)]">
-            <div className="mx-auto max-w-[1100px] px-8 max-md:px-4 h-16 flex items-center justify-between">
+        <nav>
+            <div className="flex items-center justify-between pb-4">
                 <Link
                     href="/recipes"
-                    className="font-heading text-xl font-bold tracking-[-0.03em] text-foreground no-underline hover:text-foreground"
+                    className="font-heading text-[28px] font-bold tracking-[-0.03em] text-foreground no-underline hover:text-foreground"
                 >
-                    tastebud
+                    Tastebud
                 </Link>
 
                 <div className="flex items-center gap-3">
@@ -62,33 +56,15 @@ export function Navbar({ user, username }: { user?: User; username?: string }) {
                         >
                             <Moon className="h-3.5 w-3.5 text-text-muted" />
                         </button>
-                        <button
-                            onClick={() => setTheme("system")}
-                            className={`flex items-center justify-center w-[30px] h-[26px] rounded-[6px] transition-all duration-150 ${
-                                isActive("system") ? "shadow-toggle" : ""
-                            }`}
-                            style={isActive("system") ? { background: "var(--toggle-active)" } : {}}
-                            aria-label="System mode"
-                        >
-                            <Laptop className="h-3.5 w-3.5 text-text-muted" />
-                        </button>
                     </div>
 
                     {user ? (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="focus:outline-none">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[11px] font-mono text-text-faint tracking-[0.02em]">
-                                        {username}
-                                    </span>
-                                </div>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
-                                <DropdownMenuItem className="cursor-pointer font-mono text-xs" onClick={handleSignOut}>
-                                    Sign out
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-mono text-text-faint tracking-[0.02em]">{username}</span>
+                            <Button size="sm" onClick={handleSignOut}>
+                                Sign out
+                            </Button>
+                        </div>
                     ) : (
                         <Button size="sm" onClick={() => setAuthModalOpen(true)}>
                             Sign In

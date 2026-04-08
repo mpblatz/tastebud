@@ -2,13 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface AuthModalProps {
     open: boolean;
@@ -36,14 +30,12 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
             const left = window.screenX + (window.outerWidth - width) / 2;
             const top = window.screenY + (window.outerHeight - height) / 2;
 
-            window.open(
-                data.url,
-                "google-auth",
-                `width=${width},height=${height},left=${left},top=${top}`
-            );
+            window.open(data.url, "google-auth", `width=${width},height=${height},left=${left},top=${top}`);
 
             // Listen for auth state change from the popup
-            const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+            const {
+                data: { subscription },
+            } = supabase.auth.onAuthStateChange((event) => {
                 if (event === "SIGNED_IN") {
                     subscription.unsubscribe();
                     onOpenChange(false);
@@ -59,7 +51,7 @@ export default function AuthModal({ open, onOpenChange }: AuthModalProps) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-sm">
                 <DialogHeader className="items-center">
-                    <DialogTitle className="text-xl">tastebud</DialogTitle>
+                    <DialogTitle className="text-xl">Tastebud</DialogTitle>
                     <DialogDescription>Sign in to access your recipes</DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-center pt-2">

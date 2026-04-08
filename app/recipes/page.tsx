@@ -53,8 +53,6 @@ export default async function RecipesPage() {
         })) || [];
 
     return (
-        <div className="container mx-auto px-4">
-            <FilteredRecipes initialRecipes={recipeData} isSignedIn={!!session} />
-        </div>
+        <FilteredRecipes initialRecipes={recipeData} isSignedIn={!!session} />
     );
 }

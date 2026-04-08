@@ -1,5 +1,7 @@
 // components/RecipeView.tsx
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecipeData } from "@/types";
@@ -22,18 +24,129 @@ function formatTime(minutes: number | null | undefined): string {
     return `${hours}h ${remainingMinutes}m`;
 }
 
-export function RecipeView({ recipe }: { recipe: RecipeData }) {
-    const showMacros = recipe.calories || recipe.proteinGrams || recipe.carbsGrams || recipe.fatGrams;
-    const showMeta = recipe.prepTimeMinutes || recipe.cookTimeMinutes || recipe.servings || showMacros;
+function ComponentCard({ component }: { component: RecipeData["components"][number] }) {
+    const [tab, setTab] = useState<"ingredients" | "instructions">("ingredients");
+    const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+    const [checkedInstructions, setCheckedInstructions] = useState<Set<number>>(new Set());
 
-    const metaItems: { label: string; value: string }[] = [];
-    if (recipe.prepTimeMinutes) metaItems.push({ label: "Prep", value: formatTime(recipe.prepTimeMinutes) });
-    if (recipe.cookTimeMinutes) metaItems.push({ label: "Cook", value: formatTime(recipe.cookTimeMinutes) });
-    if (recipe.servings) metaItems.push({ label: "Servings", value: String(recipe.servings) });
-    if (recipe.calories) metaItems.push({ label: "Cal", value: String(recipe.calories) });
-    if (recipe.proteinGrams) metaItems.push({ label: "Protein", value: `${recipe.proteinGrams}g` });
-    if (recipe.carbsGrams) metaItems.push({ label: "Carbs", value: `${recipe.carbsGrams}g` });
-    if (recipe.fatGrams) metaItems.push({ label: "Fat", value: `${recipe.fatGrams}g` });
+    const toggleIngredient = (i: number) => {
+        setCheckedIngredients((prev) => {
+            const next = new Set(prev);
+            if (next.has(i)) next.delete(i); else next.add(i);
+            return next;
+        });
+    };
+
+    const toggleInstruction = (i: number) => {
+        setCheckedInstructions((prev) => {
+            const next = new Set(prev);
+            if (next.has(i)) next.delete(i); else next.add(i);
+            return next;
+        });
+    };
+
+    // Sort ingredients: unchecked first, checked last, preserving original order within each group
+    const sortedIngredients = component.ingredients
+        .map((ingredient, i) => ({ ingredient, originalIndex: i }))
+        .sort((a, b) => {
+            const aChecked = checkedIngredients.has(a.originalIndex);
+            const bChecked = checkedIngredients.has(b.originalIndex);
+            if (aChecked === bChecked) return a.originalIndex - b.originalIndex;
+            return aChecked ? 1 : -1;
+        });
+
+    return (
+        <Card className="overflow-hidden">
+            <CardHeader className="bg-[var(--btn-bg)]">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="font-heading tracking-[-0.02em]">{component.name || "Main Recipe"}</CardTitle>
+                    <div className="flex items-center rounded-md p-[3px]" style={{ background: "var(--toggle-bg)" }}>
+                        <button
+                            onClick={() => setTab("ingredients")}
+                            className={`font-mono text-[11px] tracking-[0.02em] px-3 py-1 rounded-[6px] transition-all duration-150 ${
+                                tab === "ingredients" ? "shadow-toggle text-foreground" : "text-text-muted"
+                            }`}
+                            style={tab === "ingredients" ? { background: "var(--toggle-active)" } : {}}
+                        >
+                            Ingredients
+                        </button>
+                        <button
+                            onClick={() => setTab("instructions")}
+                            className={`font-mono text-[11px] tracking-[0.02em] px-3 py-1 rounded-[6px] transition-all duration-150 ${
+                                tab === "instructions" ? "shadow-toggle text-foreground" : "text-text-muted"
+                            }`}
+                            style={tab === "instructions" ? { background: "var(--toggle-active)" } : {}}
+                        >
+                            Instructions
+                        </button>
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent className="py-6 px-6">
+                {tab === "ingredients" ? (
+                    <ul className="space-y-2.5">
+                        {sortedIngredients.map(({ ingredient, originalIndex }) => {
+                            const checked = checkedIngredients.has(originalIndex);
+                            return (
+                                <li
+                                    key={originalIndex}
+                                    onClick={() => toggleIngredient(originalIndex)}
+                                    className="flex items-start gap-3 text-[15px] cursor-pointer select-none transition-opacity duration-150"
+                                    style={{ opacity: checked ? 0.4 : 1 }}
+                                >
+                                    <span
+                                        className="block w-1.5 h-1.5 mt-[9px] rounded-full shrink-0 transition-colors duration-150"
+                                        style={{ background: checked ? "rgb(var(--text-faint))" : "rgb(var(--link-color))" }}
+                                    />
+                                    <span className={checked ? "line-through" : ""}>{ingredient}</span>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                ) : (
+                    <ol className="space-y-4">
+                        {component.instructions.map((instruction, i) => {
+                            const checked = checkedInstructions.has(i);
+                            return (
+                                <li
+                                    key={i}
+                                    onClick={() => toggleInstruction(i)}
+                                    className="flex gap-3 cursor-pointer select-none transition-opacity duration-150"
+                                    style={{ opacity: checked ? 0.4 : 1 }}
+                                >
+                                    <span
+                                        className="flex-none w-6 h-6 rounded-full flex items-center justify-center font-mono text-[11px] transition-colors duration-150"
+                                        style={checked
+                                            ? { background: "rgb(var(--text-faint) / 0.1)", color: "rgb(var(--text-faint))" }
+                                            : { background: "rgb(var(--link-color) / 0.1)", color: "rgb(var(--link-color))" }
+                                        }
+                                    >
+                                        {i + 1}
+                                    </span>
+                                    <p className={`pt-0.5 text-[15px] ${checked ? "line-through" : ""}`}>{instruction}</p>
+                                </li>
+                            );
+                        })}
+                    </ol>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+export function RecipeView({ recipe }: { recipe: RecipeData }) {
+    const cookingItems: { label: string; value: string }[] = [];
+    if (recipe.prepTimeMinutes) cookingItems.push({ label: "Prep", value: formatTime(recipe.prepTimeMinutes) });
+    if (recipe.cookTimeMinutes) cookingItems.push({ label: "Cook", value: formatTime(recipe.cookTimeMinutes) });
+    if (recipe.servings) cookingItems.push({ label: "Servings", value: String(recipe.servings) });
+
+    const nutritionItems: { label: string; value: string }[] = [];
+    if (recipe.calories) nutritionItems.push({ label: "Cal", value: String(recipe.calories) });
+    if (recipe.proteinGrams) nutritionItems.push({ label: "Protein", value: `${recipe.proteinGrams}g` });
+    if (recipe.carbsGrams) nutritionItems.push({ label: "Carbs", value: `${recipe.carbsGrams}g` });
+    if (recipe.fatGrams) nutritionItems.push({ label: "Fat", value: `${recipe.fatGrams}g` });
+
+    const showMeta = cookingItems.length > 0 || nutritionItems.length > 0;
 
     return (
         <div className="space-y-6">
@@ -75,54 +188,40 @@ export function RecipeView({ recipe }: { recipe: RecipeData }) {
 
             {/* Inline metadata bar */}
             {showMeta && (
-                <div className="flex flex-wrap items-center gap-x-0 gap-y-2 border border-[var(--border)] rounded-lg overflow-hidden">
-                    {metaItems.map((item, i) => (
-                        <div
-                            key={item.label}
-                            className={`flex items-center gap-2 px-4 py-2.5 ${i < metaItems.length - 1 ? "border-r border-[var(--border)]" : ""}`}
-                        >
-                            <span className="text-[10px] font-mono text-text-faint tracking-[0.04em] uppercase">{item.label}</span>
-                            <span className="text-[14px] font-body font-medium">{item.value}</span>
+                <div className="flex items-center justify-between border border-[var(--border)] rounded-lg overflow-hidden">
+                    {cookingItems.length > 0 && (
+                        <div className="flex items-center">
+                            {cookingItems.map((item, i) => (
+                                <div
+                                    key={item.label}
+                                    className={`flex items-center gap-2 px-4 py-2.5 ${i < cookingItems.length - 1 || nutritionItems.length > 0 ? "border-r border-[var(--border)]" : ""}`}
+                                >
+                                    <span className="text-[10px] font-mono text-text-faint tracking-[0.04em] uppercase">{item.label}</span>
+                                    <span className="text-[14px] font-body font-medium">{item.value}</span>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
+                    {nutritionItems.length > 0 && (
+                        <div className="flex items-center ml-auto">
+                            {nutritionItems.map((item, i) => (
+                                <div
+                                    key={item.label}
+                                    className={`flex items-center gap-2 px-4 py-2.5 ${i < nutritionItems.length - 1 ? "border-r border-[var(--border)]" : ""}`}
+                                >
+                                    <span className="text-[10px] font-mono text-text-faint tracking-[0.04em] uppercase">{item.label}</span>
+                                    <span className="text-[14px] font-body font-medium">{item.value}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
 
             {/* Recipe components */}
             <div className="space-y-6">
                 {recipe.components.map((component, index) => (
-                    <Card key={component.id || index} className="overflow-hidden">
-                        <CardHeader className="bg-[var(--btn-bg)]">
-                            <CardTitle className="font-heading tracking-[-0.02em]">{component.name || "Main Recipe"}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-col space-y-6">
-                            <div>
-                                <h3 className="font-semibold mb-3">Ingredients</h3>
-                                <ul className="space-y-1.5">
-                                    {component.ingredients.map((ingredient, i) => (
-                                        <li key={i} className="flex items-start gap-2 text-[15px]">
-                                            <span className="block w-1.5 h-1.5 mt-[9px] rounded-full bg-accent shrink-0" />
-                                            <span>{ingredient}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div className="border-t border-[var(--divider)] pt-6">
-                                <h3 className="font-semibold mb-3">Instructions</h3>
-                                <ol className="space-y-3">
-                                    {component.instructions.map((instruction, i) => (
-                                        <li key={i} className="flex gap-3">
-                                            <span className="flex-none w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center font-mono text-[11px] text-accent">
-                                                {i + 1}
-                                            </span>
-                                            <p className="pt-0.5 text-[15px]">{instruction}</p>
-                                        </li>
-                                    ))}
-                                </ol>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <ComponentCard key={component.id || index} component={component} />
                 ))}
             </div>
         </div>

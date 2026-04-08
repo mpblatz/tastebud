@@ -72,8 +72,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     forcedTheme={undefined}
                 >
                     <div className="contents">
-                        <Navbar user={session?.user} username={userProfile?.username ?? "user"} />
-                        <main className="mx-auto max-w-[1100px] px-8 pt-12 pb-12 max-md:px-4 max-md:pt-8 max-md:pb-8">
+                        <main className="mx-auto max-w-[1100px] px-8 pt-8 pb-12 max-md:px-4 max-md:pt-6 max-md:pb-8">
+                            <Navbar user={session?.user} username={userProfile?.username ?? "user"} />
                             {children}
                         </main>
                     </div>
